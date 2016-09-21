@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	TTF_Init();
 
 	// creates window
-	SDL_Window *window = SDL_CreateWindow("SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0);
+	SDL_Window *window = SDL_CreateWindow("Tankman", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 768, 0);
 
 	// creates renderer
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -43,63 +43,66 @@ int main(int argc, char *argv[])
 	unsigned int fpsLast = SDL_GetTicks();
 	unsigned int fpsTime = 0;
 	int imageX = 0;
+	bool active = false;
 	bool exit = false;
 	while (!exit) {
-		// gets width and height of renderer
-		int w, h;
-		SDL_GetRendererOutputSize(renderer, &w, &h);
+		if (active) {
+			// gets width and height of renderer
+			int w, h;
+			SDL_GetRendererOutputSize(renderer, &w, &h);
 
-		// clears screen
-		SDL_RenderClear(renderer);
+			// clears screen
+			SDL_RenderClear(renderer);
 
-		// draws title
-		rect.x = (w - surfaceTitle->w) / 2;
-		rect.y = (h - surfaceTitle->h) / 2 - surfaceTitle->h - 32;
-		rect.w = surfaceTitle->w;
-		rect.h = surfaceTitle->h;
-		SDL_RenderCopy(renderer, textureTitle, NULL, &rect);
+			// draws title
+			rect.x = (w - surfaceTitle->w) / 2;
+			rect.y = (h - surfaceTitle->h) / 2 - surfaceTitle->h - 64;
+			rect.w = surfaceTitle->w;
+			rect.h = surfaceTitle->h;
+			SDL_RenderCopy(renderer, textureTitle, NULL, &rect);
 
-		// draws menu
-		rect.x = (w - surfaceMenu->w) / 2;
-		rect.y = (h - surfaceMenu->h) / 2 + surfaceMenu->h * 2 + 64;
-		rect.w = surfaceMenu->w;
-		rect.h = surfaceMenu->h;
-		SDL_RenderCopy(renderer, textureMenu, NULL, &rect);
+			// draws menu
+			rect.x = (w - surfaceMenu->w) / 2;
+			rect.y = (h - surfaceMenu->h) / 2 + surfaceMenu->h * 2 + 64;
+			rect.w = surfaceMenu->w;
+			rect.h = surfaceMenu->h;
+			SDL_RenderCopy(renderer, textureMenu, NULL, &rect);
 
-		// draws image
-		rect.x = imageX;
-		rect.y = (h - surfaceImage->h) / 2;
-		rect.w = surfaceImage->w;
-		rect.h = surfaceImage->h;
-		imageX += 4;
-		if (imageX > w)
-			imageX = 0;
-		SDL_RenderCopy(renderer, textureImage, NULL, &rect);
+			// draws image
+			rect.x = imageX;
+			rect.y = (h - surfaceImage->h) / 2;
+			rect.w = surfaceImage->w;
+			rect.h = surfaceImage->h;
+			imageX += 4;
+			if (imageX > w)
+				imageX = 0;
+			SDL_RenderCopy(renderer, textureImage, NULL, &rect);
 
-		// computes FPS
-		fps = SDL_GetTicks() - fpsLast;
-		fps = fps > 0 ? 1000 / fps : 1000;
-		fpsLast = SDL_GetTicks();
-		if (fpsLast - fpsTime > 1000) {
-			SDL_Log("%u fps", fps);
-			fpsTime = fpsLast;
+			// computes FPS
+			fps = SDL_GetTicks() - fpsLast;
+			fps = fps > 0 ? 1000 / fps : 1000;
+			fpsLast = SDL_GetTicks();
+			if (fpsLast - fpsTime > 1000) {
+				SDL_Log("%u fps", fps);
+				fpsTime = fpsLast;
+			}
+
+			// draws FPS
+			char fpsBuffer[16];
+			sprintf(fpsBuffer, "%u", fps);
+			SDL_Surface *surfaceFPS = TTF_RenderUTF8_Solid(fontSmall, fpsBuffer, { 0x80, 0x80, 0x80 });
+			SDL_Texture *textureFPS = SDL_CreateTextureFromSurface(renderer, surfaceFPS);
+			rect.x = surfaceWindow->w - surfaceFPS->w;
+			rect.y = surfaceWindow->h - surfaceFPS->h;
+			rect.w = surfaceFPS->w;
+			rect.h = surfaceFPS->h;
+			SDL_RenderCopy(renderer, textureFPS, NULL, &rect);
+			SDL_DestroyTexture(textureFPS);
+			SDL_FreeSurface(surfaceFPS);
+
+			// outputs to screen
+			SDL_RenderPresent(renderer);
 		}
-
-		// draws FPS
-		char fpsBuffer[16];
-		sprintf(fpsBuffer, "%u", fps);
-		SDL_Surface *surfaceFPS = TTF_RenderUTF8_Solid(fontSmall, fpsBuffer, { 0x80, 0x80, 0x80 });
-		SDL_Texture *textureFPS = SDL_CreateTextureFromSurface(renderer, surfaceFPS);
-		rect.x = surfaceWindow->w - surfaceFPS->w;
-		rect.y = surfaceWindow->h - surfaceFPS->h;
-		rect.w = surfaceFPS->w;
-		rect.h = surfaceFPS->h;
-		SDL_RenderCopy(renderer, textureFPS, NULL, &rect);
-		SDL_DestroyTexture(textureFPS);
-		SDL_FreeSurface(surfaceFPS);
-
-		// outputs to screen
-		SDL_RenderPresent(renderer);
 
 		// polls events until queue empty
 		while (SDL_PollEvent(&e)) {
@@ -107,7 +110,17 @@ int main(int argc, char *argv[])
 				if (e.key.keysym.sym == SDLK_ESCAPE)
 					exit = true;
 			}
-			if (e.type == SDL_QUIT) {
+			else if (e.type == SDL_WINDOWEVENT) {
+				if (e.window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
+					SDL_Log("window %d gained keyboard focus", e.window.windowID);
+					active = true;
+				}
+				else if (e.window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
+					SDL_Log("window %d lost keyboard focus", e.window.windowID);
+					active = false;
+				}
+			}
+			else if (e.type == SDL_QUIT) {
 				exit = true;
 			}
 		}

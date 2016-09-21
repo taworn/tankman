@@ -11,6 +11,10 @@ This game is NOT a fun game.  It's just a simple game to let you learn how to wr
 
  - Microsoft Visual Studio 2015 Community
  - libSDL 2.0.4 and sub-projects
+ 
+**Compiling**
+
+ - ...
 
 **Known Bugs**
 
