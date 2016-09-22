@@ -17,14 +17,16 @@ SceneTitle::~SceneTitle()
 	SDL_FreeSurface(surfaceMenu);
 	SDL_DestroyTexture(textureTitle);
 	SDL_FreeSurface(surfaceTitle);
+	SDL_Log("SceneTitle::~SceneTitle()");
 }
 
 SceneTitle::SceneTitle()
 {
+	SDL_Log("SceneTitle::SceneTitle()");
 	Game *game = Game::instance();
 	surfaceTitle = TTF_RenderUTF8_Solid(game->getFontLarge(), "Tankman", { 0x80, 0xCC, 0x80 });
 	textureTitle = SDL_CreateTextureFromSurface(game->getRenderer(), surfaceTitle);
-	surfaceMenu = TTF_RenderUTF8_Solid(game->getFontMedium(), "Press ESC to EXIT", { 0xFF, 0xFF, 0xFF });
+	surfaceMenu = TTF_RenderUTF8_Solid(game->getFontMedium(), "Press ENTER to START", { 0xFF, 0xFF, 0xFF });
 	textureMenu = SDL_CreateTextureFromSurface(game->getRenderer(), surfaceMenu);
 	surfaceImage = IMG_Load(".\\res\\tank.png");
 	textureImage = SDL_CreateTextureFromSurface(game->getRenderer(), surfaceImage);
@@ -40,15 +42,13 @@ void SceneTitle::handleKey(SDL_KeyboardEvent key)
 {
 	SDL_Log("SceneTitle::handleKey(%d)", key.keysym.sym);
 	if (key.keysym.sym == SDLK_RETURN)
-		Game::instance()->changeScene(Game::SCENE_DEFAULT);
+		Game::instance()->changeScene(Game::SCENE_STAGE);
 }
 
-void SceneTitle::render()
+void SceneTitle::render(int timeUsed)
 {
 	Game *game = Game::instance();
 	SDL_Rect rect;
-
-	// gets width and height of renderer
 	int w, h;
 	SDL_GetRendererOutputSize(game->getRenderer(), &w, &h);
 

@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cxx" />
+    <ClCompile Include="src\game\arena.cxx" />
+    <ClCompile Include="src\game\map.cxx" />
     <ClCompile Include="src\main.cxx" />
     <ClCompile Include="src\scenes\scene.cxx" />
     <ClCompile Include="src\scenes\scene_lost.cxx" />
@@ -30,6 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game.hxx" />
+    <ClInclude Include="src\game\arena.hxx" />
+    <ClInclude Include="src\game\common.hxx" />
+    <ClInclude Include="src\game\map.hxx" />
     <ClInclude Include="src\scenes\scene.hxx" />
     <ClInclude Include="src\scenes\scene_lost.hxx" />
     <ClInclude Include="src\scenes\scene_play.hxx" />

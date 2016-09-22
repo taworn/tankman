@@ -34,7 +34,7 @@ public:
 	/**
 	 * Called every render frame.
 	 */
-	virtual void render();
+	virtual void render(int timeUsed);
 
 private:
 	Scene(const Scene&);

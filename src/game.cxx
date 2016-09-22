@@ -12,6 +12,7 @@
 #include "scenes/scene_play.hxx"
 #include "scenes/scene_lost.hxx"
 #include "scenes/scene_win.hxx"
+#include "game/common.hxx"
 #include <stdio.h>
 
 Game *Game::singleton = NULL;
@@ -20,6 +21,9 @@ Game::~Game()
 {
 	// deletes current scene
 	delete scene;
+
+	// deletes arena
+	delete arena;
 
 	// closes fonts
 	TTF_CloseFont(fontLarge);
@@ -54,6 +58,9 @@ Game::Game()
 	fontSmall = TTF_OpenFont(".\\res\\freefont\\FreeSans.ttf", 24);
 	fontMedium = TTF_OpenFont(".\\res\\freefont\\FreeSans.ttf", 32);
 	fontLarge = TTF_OpenFont(".\\res\\freefont\\FreeSerifBold.ttf", 64);
+
+	// creates arena
+	arena = new Arena();
 }
 
 void Game::changeScene(int sceneId)
@@ -97,6 +104,8 @@ void Game::run()
 	SDL_Event e;
 	unsigned int fpsLast = SDL_GetTicks();
 	unsigned int fpsTime = 0;
+	unsigned int timeLast = SDL_GetTicks();
+	unsigned int timeUsed = SDL_GetTicks() - timeLast;
 	bool active = false;
 	bool exit = false;
 
@@ -108,8 +117,10 @@ void Game::run()
 			SDL_RenderClear(renderer);
 
 			// render current scene
+			timeUsed = SDL_GetTicks() - timeLast;
+			timeLast = SDL_GetTicks();
 			if (nextSceneId < 0)
-				scene->render();
+				scene->render(timeUsed);
 			else
 				switchScene();
 
@@ -154,6 +165,7 @@ void Game::run()
 					active = true;
 					if (scene)
 						scene->handleActivate(active);
+					timeLast = SDL_GetTicks();
 				}
 				else if (e.window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
 					SDL_Log("window lost focus");

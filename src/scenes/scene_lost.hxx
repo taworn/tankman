@@ -16,9 +16,11 @@ public:
 
 	virtual void handleActivate(bool active);
 	virtual void handleKey(SDL_KeyboardEvent key);
-	virtual void render();
+	virtual void render(int timeUsed);
 
 private:
+	SDL_Surface *surface;
+	SDL_Texture *texture;
 };
 
 #endif // SCENES_SCENE_LOST_HXX

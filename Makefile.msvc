@@ -92,7 +92,9 @@ MODULES=\
 	$(TARGET_DIR)\scenes\scene_play.obj \
 	$(TARGET_DIR)\scenes\scene_stage.obj \
 	$(TARGET_DIR)\scenes\scene_title.obj \
-	$(TARGET_DIR)\scenes\scene.obj
+	$(TARGET_DIR)\scenes\scene.obj \
+	$(TARGET_DIR)\game\arena.obj \
+	$(TARGET_DIR)\game\map.obj
 
 # headers
 HEADERS=\
@@ -102,7 +104,9 @@ HEADERS=\
 	$(TARGET_DIR)\scenes\scene_play.hxx \
 	$(TARGET_DIR)\scenes\scene_stage.hxx \
 	$(TARGET_DIR)\scenes\scene_title.hxx \
-	$(TARGET_DIR)\scenes\scene.hxx
+	$(TARGET_DIR)\scenes\scene.hxx \
+	$(TARGET_DIR)\game\arena.hxx \
+	$(TARGET_DIR)\game\map.hxx
 
 # directories
 INCLUDE_DIRS=/I$(SDL)\include /I$(SDL_IMAGE) /I$(SDL_TTF)
@@ -130,6 +134,7 @@ all: prepare $(OUTPUT_DIR)\$(OUTPUT)
 prepare:
 	-mkdir 2>NUL $(TARGET_DIR)
 	-mkdir 2>NUL $(TARGET_DIR)\scenes
+	-mkdir 2>NUL $(TARGET_DIR)\game
 	-mkdir 2>NUL $(OUTPUT_DIR)
 	-copy /y $(SDL)\lib\$(X64_TAG)\SDL2.dll $(OUTPUT_DIR)
 	-copy /y $(SDL_IMAGE)\lib\$(X64_TAG)\SDL2_image.dll $(OUTPUT_DIR)
@@ -142,6 +147,7 @@ check: all
 	$(OUTPUT_DIR)\$(OUTPUT)
 
 clean:
+	-del /q 2>NUL $(TARGET_DIR)\game\*.obj
 	-del /q 2>NUL $(TARGET_DIR)\scenes\*.obj
 	-del /q 2>NUL $(TARGET_DIR)\*.obj
 	-del /q 2>NUL $(TARGET_DIR)\*.res
@@ -152,6 +158,9 @@ clean-all: clean
 
 $(OUTPUT_DIR)\$(OUTPUT): $(MODULES)
 	$(LD) $(LFLAGS) $(COMMON_LFLAGS) /OUT:$@ $** $(LIBRARIES)
+
+{$(SOURCE_DIR)\game}.cxx{$(TARGET_DIR)\game}.obj:
+	$(CC) $(CFLAGS) $(COMMON_CFLAGS) /Fo$@ /c $<
 
 {$(SOURCE_DIR)\scenes}.cxx{$(TARGET_DIR)\scenes}.obj:
 	$(CC) $(CFLAGS) $(COMMON_CFLAGS) /Fo$@ /c $<

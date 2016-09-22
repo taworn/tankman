@@ -6,6 +6,7 @@
 #define GAME_HXX
 
 class Scene;
+class Arena;
 
 /**
  * A simple game framework class.
@@ -33,6 +34,11 @@ public:
 	Game();
 
 	/**
+	 * Gets current arena.
+	 */
+	Arena* getArena() { return arena; }
+
+	/**
 	 * Changes the new scene.
 	 * @param sceneId A scene identifier, look at SCENE_*.
 	 */
@@ -41,7 +47,7 @@ public:
 	/**
 	 * Gets current scene.
 	 */
-	Scene* currentScene() const { return scene; }
+	Scene* currentScene() { return scene; }
 
 	SDL_Window* getWindow() const { return window; }
 	SDL_Renderer* getRenderer() const { return renderer; }
@@ -57,6 +63,7 @@ private:
 	TTF_Font *fontSmall;
 	TTF_Font *fontMedium;
 	TTF_Font *fontLarge;
+	Arena *arena;
 	Scene *scene;
 	int nextSceneId;
 	int fps;

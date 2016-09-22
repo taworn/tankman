@@ -16,7 +16,7 @@ public:
 
 	virtual void handleActivate(bool active);
 	virtual void handleKey(SDL_KeyboardEvent key);
-	virtual void render();
+	virtual void render(int timeUsed);
 
 private:
 	SDL_Surface *surfaceTitle;
