@@ -85,10 +85,24 @@ endif
 
 # modules
 MODULES:=\
-	$(TARGET_DIR)\main.o
+	$(TARGET_DIR)\main.o \
+	$(TARGET_DIR)\game.o \
+	$(TARGET_DIR)\scenes\scene_win.o \
+	$(TARGET_DIR)\scenes\scene_lost.o \
+	$(TARGET_DIR)\scenes\scene_play.o \
+	$(TARGET_DIR)\scenes\scene_stage.o \
+	$(TARGET_DIR)\scenes\scene_title.o \
+	$(TARGET_DIR)\scenes\scene.o
 
 # headers
-HEADERS:=
+HEADERS:=\
+	$(TARGET_DIR)\game.hxx \
+	$(TARGET_DIR)\scenes\scene_win.hxx \
+	$(TARGET_DIR)\scenes\scene_lost.hxx \
+	$(TARGET_DIR)\scenes\scene_play.hxx \
+	$(TARGET_DIR)\scenes\scene_stage.hxx \
+	$(TARGET_DIR)\scenes\scene_title.hxx \
+	$(TARGET_DIR)\scenes\scene.hxx
 
 # directories
 INCLUDE_DIRS:=-I$(SDL)\include -I$(SDL_IMAGE) -I$(SDL_TTF)
@@ -98,7 +112,7 @@ LIBRARY_DIRS:=-L$(SDL)\lib\$(X64_TAG) -L$(SDL_IMAGE)\lib\$(X64_TAG) -L$(SDL_TTF)
 LIBRARIES:=-lSDL2_ttf -lSDL2_image -lSDL2main -lSDL2 -luser32 -lgdi32 -lkernel32
 
 # executable
-OUTPUT:=testmingw$(SHARED_TAG)$(DEBUG_TAG).exe
+OUTPUT:=tankmanmingw$(SHARED_TAG)$(DEBUG_TAG).exe
 
 # common flags
 COMMON_DEFINES:=-DUNICODE=1 -D_UNICODE=1
@@ -115,6 +129,7 @@ all: prepare $(OUTPUT_DIR)\$(OUTPUT)
 
 prepare:
 	if not exist $(TARGET_DIR) mkdir 2>NUL $(TARGET_DIR)
+	if not exist $(TARGET_DIR)\scenes mkdir 2>NUL $(TARGET_DIR)\scenes
 	if not exist $(OUTPUT_DIR) mkdir 2>NUL $(OUTPUT_DIR)
 	copy /y $(SDL)\lib\$(X64_TAG)\SDL2.dll $(OUTPUT_DIR)
 	copy /y $(SDL_IMAGE)\lib\$(X64_TAG)\SDL2_image.dll $(OUTPUT_DIR)
@@ -127,6 +142,7 @@ check: all
 	$(OUTPUT_DIR)\$(OUTPUT)
 
 clean:
+	if exist $(TARGET_DIR)\scenes del /q 2>NUL $(TARGET_DIR)\scenes\*.o
 	if exist $(TARGET_DIR) del /q 2>NUL $(TARGET_DIR)\*.o
 
 clean-all: clean
@@ -134,6 +150,9 @@ clean-all: clean
 
 $(OUTPUT_DIR)\$(OUTPUT): $(MODULES)
 	$(LD) $(LFLAGS) $(COMMON_LFLAGS) -o $@ $+ $(LIBRARIES)
+
+$(TARGET_DIR)\scenes\\%.o: $(SOURCE_DIR)\scenes\\%.cxx
+	$(CC) $(CFLAGS) $(COMMON_CFLAGS) -o $@ -c $<
 
 $(TARGET_DIR)\\%.o: $(SOURCE_DIR)\\%.cxx
 	$(CC) $(CFLAGS) $(COMMON_CFLAGS) -o $@ -c $<
