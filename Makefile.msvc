@@ -94,7 +94,10 @@ MODULES=\
 	$(TARGET_DIR)\scenes\scene_title.obj \
 	$(TARGET_DIR)\scenes\scene.obj \
 	$(TARGET_DIR)\game\arena.obj \
-	$(TARGET_DIR)\game\map.obj
+	$(TARGET_DIR)\game\map.obj \
+	$(TARGET_DIR)\menu.obj \
+	$(TARGET_DIR)\animation.obj \
+	$(TARGET_DIR)\sprite.obj
 
 # headers
 HEADERS=\
@@ -106,7 +109,10 @@ HEADERS=\
 	$(TARGET_DIR)\scenes\scene_title.hxx \
 	$(TARGET_DIR)\scenes\scene.hxx \
 	$(TARGET_DIR)\game\arena.hxx \
-	$(TARGET_DIR)\game\map.hxx
+	$(TARGET_DIR)\game\map.hxx \
+	$(TARGET_DIR)\menu.hxx \
+	$(TARGET_DIR)\animation.hxx \
+	$(TARGET_DIR)\sprite.hxx
 
 # directories
 INCLUDE_DIRS=/I$(SDL)\include /I$(SDL_IMAGE) /I$(SDL_TTF)

@@ -14,9 +14,8 @@ public:
 	virtual ~ScenePlay();
 	ScenePlay();
 
-	virtual void handleActivate(bool active);
-	virtual void handleKey(SDL_KeyboardEvent key);
-	virtual void render(int timeUsed);
+	virtual bool handleKey(SDL_KeyboardEvent key);
+	virtual void render(unsigned int timeUsed);
 
 private:
 };

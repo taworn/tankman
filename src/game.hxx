@@ -5,6 +5,10 @@
 #ifndef GAME_HXX
 #define GAME_HXX
 
+#include "sprite.hxx"
+#include "animation.hxx"
+#include "menu.hxx"
+
 class Scene;
 class Arena;
 

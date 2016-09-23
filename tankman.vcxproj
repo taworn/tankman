@@ -19,28 +19,34 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\animation.cxx" />
     <ClCompile Include="src\game.cxx" />
     <ClCompile Include="src\game\arena.cxx" />
     <ClCompile Include="src\game\map.cxx" />
     <ClCompile Include="src\main.cxx" />
+    <ClCompile Include="src\menu.cxx" />
     <ClCompile Include="src\scenes\scene.cxx" />
     <ClCompile Include="src\scenes\scene_lost.cxx" />
     <ClCompile Include="src\scenes\scene_play.cxx" />
     <ClCompile Include="src\scenes\scene_stage.cxx" />
     <ClCompile Include="src\scenes\scene_title.cxx" />
     <ClCompile Include="src\scenes\scene_win.cxx" />
+    <ClCompile Include="src\sprite.cxx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\animation.hxx" />
     <ClInclude Include="src\game.hxx" />
     <ClInclude Include="src\game\arena.hxx" />
     <ClInclude Include="src\game\common.hxx" />
     <ClInclude Include="src\game\map.hxx" />
+    <ClInclude Include="src\menu.hxx" />
     <ClInclude Include="src\scenes\scene.hxx" />
     <ClInclude Include="src\scenes\scene_lost.hxx" />
     <ClInclude Include="src\scenes\scene_play.hxx" />
     <ClInclude Include="src\scenes\scene_stage.hxx" />
     <ClInclude Include="src\scenes\scene_title.hxx" />
     <ClInclude Include="src\scenes\scene_win.hxx" />
+    <ClInclude Include="src\sprite.hxx" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FDF0AA75-D17D-4CF7-9ACF-32DF75847CC7}</ProjectGuid>

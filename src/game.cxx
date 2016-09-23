@@ -154,24 +154,23 @@ void Game::run()
 		// polls events until queue empty
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_KEYDOWN) {
+				bool handled = false;
 				if (scene)
-					scene->handleKey(e.key);
-				if (e.key.keysym.sym == SDLK_ESCAPE)
-					exit = true;
+					handled = scene->handleKey(e.key);
+				if (!handled) {
+					if (e.key.keysym.sym == SDLK_ESCAPE)
+						exit = true;
+				}
 			}
 			else if (e.type == SDL_WINDOWEVENT) {
 				if (e.window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
 					SDL_Log("window gained focus");
 					active = true;
-					if (scene)
-						scene->handleActivate(active);
 					timeLast = SDL_GetTicks();
 				}
 				else if (e.window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
 					SDL_Log("window lost focus");
 					active = false;
-					if (scene)
-						scene->handleActivate(active);
 				}
 			}
 			else if (e.type == SDL_QUIT) {

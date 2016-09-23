@@ -14,17 +14,16 @@ public:
 	virtual ~SceneTitle();
 	SceneTitle();
 
-	virtual void handleActivate(bool active);
-	virtual void handleKey(SDL_KeyboardEvent key);
-	virtual void render(int timeUsed);
+	virtual bool handleKey(SDL_KeyboardEvent key);
+	virtual void render(unsigned int timeUsed);
 
 private:
 	SDL_Surface *surfaceTitle;
 	SDL_Texture *textureTitle;
-	SDL_Surface *surfaceMenu;
-	SDL_Texture *textureMenu;
-	SDL_Surface *surfaceImage;
-	SDL_Texture *textureImage;
+	Sprite *spriteTank;
+	Animation aniTank;
+	Animation aniMenu;
+	Menu *menu;
 	int imageX;
 };
 

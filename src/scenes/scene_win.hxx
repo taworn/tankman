@@ -14,13 +14,14 @@ public:
 	virtual ~SceneWin();
 	SceneWin();
 
-	virtual void handleActivate(bool active);
-	virtual void handleKey(SDL_KeyboardEvent key);
-	virtual void render(int timeUsed);
+	virtual bool handleKey(SDL_KeyboardEvent key);
+	virtual void render(unsigned int timeUsed);
 
 private:
 	SDL_Surface *surface;
 	SDL_Texture *texture;
+	SDL_Surface *surfaceBrought;
+	SDL_Texture *textureBrought;
 };
 
 #endif // SCENES_SCENE_WIN_HXX

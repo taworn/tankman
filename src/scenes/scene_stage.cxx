@@ -25,23 +25,21 @@ SceneStage::SceneStage()
 	Game *game = Game::instance();
 	char buffer[16];
 	sprintf(buffer, "Stage %d", game->getArena()->getStage() + 1);
-	surface = TTF_RenderUTF8_Solid(game->getFontLarge(), buffer, { 0xFF, 0xFF, 0xFF });
+	surface = TTF_RenderUTF8_Blended(game->getFontLarge(), buffer, { 0xFF, 0xFF, 0xFF });
 	texture = SDL_CreateTextureFromSurface(game->getRenderer(), surface);
 }
 
-void SceneStage::handleActivate(bool active)
-{
-	SDL_Log("SceneStage::handleActivate(%d)", active);
-}
-
-void SceneStage::handleKey(SDL_KeyboardEvent key)
+bool SceneStage::handleKey(SDL_KeyboardEvent key)
 {
 	SDL_Log("SceneStage::handleKey(%d)", key.keysym.sym);
-	if (key.keysym.sym == SDLK_RETURN)
+	if (key.keysym.sym == SDLK_RETURN) {
 		Game::instance()->changeScene(Game::SCENE_PLAY);
+		return true;
+	}
+	return false;
 }
 
-void SceneStage::render(int timeUsed)
+void SceneStage::render(unsigned int timeUsed)
 {
 	Game *game = Game::instance();
 	SDL_Rect rect;

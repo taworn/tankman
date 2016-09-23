@@ -14,13 +14,15 @@ public:
 	virtual ~SceneLost();
 	SceneLost();
 
-	virtual void handleActivate(bool active);
-	virtual void handleKey(SDL_KeyboardEvent key);
-	virtual void render(int timeUsed);
+	virtual bool handleKey(SDL_KeyboardEvent key);
+	virtual void render(unsigned int timeUsed);
 
 private:
 	SDL_Surface *surface;
 	SDL_Texture *texture;
+	Sprite *spriteTank;
+	Animation aniMenu;
+	Menu *menu;
 };
 
 #endif // SCENES_SCENE_LOST_HXX

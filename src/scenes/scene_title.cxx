@@ -11,10 +11,8 @@
 
 SceneTitle::~SceneTitle()
 {
-	SDL_DestroyTexture(textureImage);
-	SDL_FreeSurface(surfaceImage);
-	SDL_DestroyTexture(textureMenu);
-	SDL_FreeSurface(surfaceMenu);
+	delete menu;
+	delete spriteTank;
 	SDL_DestroyTexture(textureTitle);
 	SDL_FreeSurface(surfaceTitle);
 	SDL_Log("SceneTitle::~SceneTitle()");
@@ -24,28 +22,38 @@ SceneTitle::SceneTitle()
 {
 	SDL_Log("SceneTitle::SceneTitle()");
 	Game *game = Game::instance();
-	surfaceTitle = TTF_RenderUTF8_Solid(game->getFontLarge(), "Tankman", { 0x80, 0xCC, 0x80 });
+	surfaceTitle = TTF_RenderUTF8_Blended(game->getFontLarge(), "Tankman", { 0x80, 0xCC, 0x80 });
 	textureTitle = SDL_CreateTextureFromSurface(game->getRenderer(), surfaceTitle);
-	surfaceMenu = TTF_RenderUTF8_Solid(game->getFontMedium(), "Press ENTER to START", { 0xFF, 0xFF, 0xFF });
-	textureMenu = SDL_CreateTextureFromSurface(game->getRenderer(), surfaceMenu);
-	surfaceImage = IMG_Load(".\\res\\tank.png");
-	textureImage = SDL_CreateTextureFromSurface(game->getRenderer(), surfaceImage);
+
+	spriteTank = new Sprite(game->getRenderer(), ".\\res\\tank.png", 16, 16);
+
+	aniTank.add(0, 134, 136, Animation::ON_END_CONTINUE, 250);
+	aniTank.use(0);
+
+	aniMenu.add(0, 6, 8, Animation::ON_END_CONTINUE, 250);
+	aniMenu.use(0);
+	const char *entries[] = {
+		"Continue",
+		"Start",
+	};
+	menu = new Menu(game->getRenderer(), game->getFontMedium(), { 0xFF, 0xFF, 0xFF }, entries, 2, 32, 48, spriteTank, &aniMenu, 2);
+
 	imageX = 0;
 }
 
-void SceneTitle::handleActivate(bool active)
-{
-	SDL_Log("SceneTitle::handleActivate(%d)", active);
-}
-
-void SceneTitle::handleKey(SDL_KeyboardEvent key)
+bool SceneTitle::handleKey(SDL_KeyboardEvent key)
 {
 	SDL_Log("SceneTitle::handleKey(%d)", key.keysym.sym);
-	if (key.keysym.sym == SDLK_RETURN)
+	bool handled = menu->handleKey(key);
+	if (!handled && key.keysym.sym == SDLK_RETURN) {
+		SDL_Log("menu selected %d", menu->getSelected());
 		Game::instance()->changeScene(Game::SCENE_STAGE);
+		return true;
+	}
+	return false;
 }
 
-void SceneTitle::render(int timeUsed)
+void SceneTitle::render(unsigned int timeUsed)
 {
 	Game *game = Game::instance();
 	SDL_Rect rect;
@@ -59,21 +67,21 @@ void SceneTitle::render(int timeUsed)
 	rect.h = surfaceTitle->h;
 	SDL_RenderCopy(game->getRenderer(), textureTitle, NULL, &rect);
 
-	// draws menu
-	rect.x = (w - surfaceMenu->w) / 2;
-	rect.y = (h - surfaceMenu->h) / 2 + surfaceMenu->h * 2 + 64;
-	rect.w = surfaceMenu->w;
-	rect.h = surfaceMenu->h;
-	SDL_RenderCopy(game->getRenderer(), textureMenu, NULL, &rect);
-
 	// draws image
 	rect.x = imageX;
-	rect.y = (h - surfaceImage->h) / 2;
-	rect.w = surfaceImage->w;
-	rect.h = surfaceImage->h;
+	rect.y = h / 2;
+	rect.w = spriteTank->getWidth() * 4;
+	rect.h = spriteTank->getHeight() * 4;
+	aniTank.draw(game->getRenderer(), spriteTank, &rect);
 	imageX += 4;
 	if (imageX > w)
 		imageX = 0;
-	SDL_RenderCopy(game->getRenderer(), textureImage, NULL, &rect);
+
+	// draws menu
+	rect.x = (w - menu->getWidth()) / 2;
+	rect.y = (h - menu->getHeight()) / 2 + 160;
+	rect.w = menu->getWidth();
+	rect.h = menu->getHeight();
+	menu->draw(game->getRenderer(), &rect);
 }
 

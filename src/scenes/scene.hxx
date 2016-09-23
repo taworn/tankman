@@ -22,19 +22,14 @@ public:
 	Scene();
 
 	/**
-	 * Called when window is activated/deactivated.
-	 */
-	virtual void handleActivate(bool active);
-
-	/**
 	 * Called when user press keyboard.
 	 */
-	virtual void handleKey(SDL_KeyboardEvent key);
+	virtual bool handleKey(SDL_KeyboardEvent key);
 
 	/**
 	 * Called every render frame.
 	 */
-	virtual void render(int timeUsed);
+	virtual void render(unsigned int timeUsed);
 
 private:
 	Scene(const Scene&);

@@ -57,6 +57,15 @@
     <ClCompile Include="src\game\map.cxx">
       <Filter>Source Files\game</Filter>
     </ClCompile>
+    <ClCompile Include="src\animation.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sprite.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\menu.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game.hxx">
@@ -88,6 +97,15 @@
     </ClInclude>
     <ClInclude Include="src\game\map.hxx">
       <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\animation.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sprite.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu.hxx">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -20,21 +20,21 @@ ScenePlay::ScenePlay()
 	SDL_Log("ScenePlay::ScenePlay()");
 }
 
-void ScenePlay::handleActivate(bool active)
-{
-	SDL_Log("ScenePlay::handleActivate(%d)", active);
-}
-
-void ScenePlay::handleKey(SDL_KeyboardEvent key)
+bool ScenePlay::handleKey(SDL_KeyboardEvent key)
 {
 	SDL_Log("ScenePlay::handleKey(%d)", key.keysym.sym);
-	if (key.keysym.sym == SDLK_l)
+	if (key.keysym.sym == SDLK_l) {
 		Game::instance()->changeScene(Game::SCENE_LOST);
-	else if (key.keysym.sym == SDLK_w)
+		return true;
+	}
+	else if (key.keysym.sym == SDLK_w) {
 		Game::instance()->changeScene(Game::SCENE_WIN);
+		return true;
+	}
+	return false;
 }
 
-void ScenePlay::render(int timeUsed)
+void ScenePlay::render(unsigned int timeUsed)
 {
 }
 
