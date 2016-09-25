@@ -25,6 +25,9 @@ Game::~Game()
 	// deletes arena
 	delete arena;
 
+	// deletes draw number
+	delete drawNumberSmall;
+
 	// closes fonts
 	TTF_CloseFont(fontLarge);
 	TTF_CloseFont(fontMedium);
@@ -40,6 +43,7 @@ Game::~Game()
 Game::Game()
 	: window(NULL), renderer(NULL), surfaceWindow(NULL)
 	, fontSmall(NULL), fontMedium(NULL), fontLarge(NULL)
+	, drawNumberSmall(NULL)
 	, scene(NULL), nextSceneId(SCENE_TITLE)
 {
 	SDL_assert(singleton == NULL);
@@ -55,9 +59,12 @@ Game::Game()
 	surfaceWindow = SDL_GetWindowSurface(window);
 
 	// opens fonts
-	fontSmall = TTF_OpenFont(".\\res\\freefont\\FreeSans.ttf", 24);
-	fontMedium = TTF_OpenFont(".\\res\\freefont\\FreeSans.ttf", 32);
-	fontLarge = TTF_OpenFont(".\\res\\freefont\\FreeSerifBold.ttf", 64);
+	fontSmall = TTF_OpenFont(TANK_RES_("freefont", "FreeSans.ttf"), 24);
+	fontMedium = TTF_OpenFont(TANK_RES_("freefont", "FreeSans.ttf"), 32);
+	fontLarge = TTF_OpenFont(TANK_RES_("freefont", "FreeSerifBold.ttf"), 64);
+
+	// creates draw number
+	drawNumberSmall = new DrawNumber(renderer, fontSmall, { 0x80, 0x80, 0x80 });
 
 	// creates arena
 	arena = new Arena();
@@ -133,12 +140,13 @@ void Game::run()
 				fpsTime = fpsLast;
 			}
 
+			/*
 			// draws FPS
+			SDL_Rect rect;
 			char fpsBuffer[16];
 			sprintf(fpsBuffer, "%u", fps);
 			SDL_Surface *surfaceFPS = TTF_RenderUTF8_Solid(fontSmall, fpsBuffer, { 0x80, 0x80, 0x80 });
 			SDL_Texture *textureFPS = SDL_CreateTextureFromSurface(renderer, surfaceFPS);
-			SDL_Rect rect;
 			rect.x = surfaceWindow->w - surfaceFPS->w;
 			rect.y = surfaceWindow->h - surfaceFPS->h;
 			rect.w = surfaceFPS->w;
@@ -146,6 +154,14 @@ void Game::run()
 			SDL_RenderCopy(renderer, textureFPS, NULL, &rect);
 			SDL_DestroyTexture(textureFPS);
 			SDL_FreeSurface(surfaceFPS);
+			*/
+
+			// draws FPS
+			SDL_Point point = {
+				surfaceWindow->w - (drawNumberSmall->getWidth() * 4),
+				surfaceWindow->h - drawNumberSmall->getHeight()
+			};
+			drawNumberSmall->draw(renderer, fps, 4, point);
 
 			// outputs to screen
 			SDL_RenderPresent(renderer);

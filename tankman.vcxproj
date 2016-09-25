@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\animation.cxx" />
+    <ClCompile Include="src\drawnum.cxx" />
     <ClCompile Include="src\game.cxx" />
     <ClCompile Include="src\game\arena.cxx" />
     <ClCompile Include="src\game\map.cxx" />
@@ -35,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\animation.hxx" />
+    <ClInclude Include="src\drawnum.hxx" />
     <ClInclude Include="src\game.hxx" />
     <ClInclude Include="src\game\arena.hxx" />
     <ClInclude Include="src\game\common.hxx" />

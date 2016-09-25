@@ -5,9 +5,18 @@
 #ifndef GAME_HXX
 #define GAME_HXX
 
+#ifdef __ANDROID__
+#define TANK_RES(string) (string)
+#define TANK_RES_(dir, string) (string)
+#else
+#define TANK_RES(string) (".\\res\\" string)
+#define TANK_RES_(dir, string) (".\\res\\" dir "\\" string)
+#endif
+
 #include "sprite.hxx"
 #include "animation.hxx"
 #include "menu.hxx"
+#include "drawnum.hxx"
 
 class Scene;
 class Arena;
@@ -67,6 +76,7 @@ private:
 	TTF_Font *fontSmall;
 	TTF_Font *fontMedium;
 	TTF_Font *fontLarge;
+	DrawNumber *drawNumberSmall;
 	Arena *arena;
 	Scene *scene;
 	int nextSceneId;

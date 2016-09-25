@@ -25,7 +25,7 @@ SceneLost::SceneLost()
 	surface = TTF_RenderUTF8_Blended(game->getFontLarge(), "Game Over", { 0xFF, 0x80, 0x40 });
 	texture = SDL_CreateTextureFromSurface(game->getRenderer(), surface);
 
-	spriteTank = new Sprite(game->getRenderer(), ".\\res\\tank.png", 16, 16);
+	spriteTank = new Sprite(game->getRenderer(), TANK_RES("tank.png"), 16, 16);
 	aniMenu.add(0, 6, 8, Animation::ON_END_CONTINUE, 250);
 	aniMenu.use(0);
 	const char *entries[] = {

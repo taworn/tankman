@@ -95,6 +95,7 @@ MODULES:=\
 	$(TARGET_DIR)\scenes\scene.o \
 	$(TARGET_DIR)\game\arena.o \
 	$(TARGET_DIR)\game\map.o \
+	$(TARGET_DIR)\drawnum.o \
 	$(TARGET_DIR)\menu.o \
 	$(TARGET_DIR)\animation.o \
 	$(TARGET_DIR)\sprite.o
@@ -110,6 +111,7 @@ HEADERS:=\
 	$(TARGET_DIR)\scenes\scene.hxx \
 	$(TARGET_DIR)\game\arena.hxx \
 	$(TARGET_DIR)\game\map.hxx \
+	$(TARGET_DIR)\drawnum.hxx \
 	$(TARGET_DIR)\menu.hxx \
 	$(TARGET_DIR)\animation.hxx \
 	$(TARGET_DIR)\sprite.hxx

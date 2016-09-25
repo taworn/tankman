@@ -25,7 +25,7 @@ SceneTitle::SceneTitle()
 	surfaceTitle = TTF_RenderUTF8_Blended(game->getFontLarge(), "Tankman", { 0x80, 0xCC, 0x80 });
 	textureTitle = SDL_CreateTextureFromSurface(game->getRenderer(), surfaceTitle);
 
-	spriteTank = new Sprite(game->getRenderer(), ".\\res\\tank.png", 16, 16);
+	spriteTank = new Sprite(game->getRenderer(), TANK_RES("tank.png"), 16, 16);
 
 	aniTank.add(0, 134, 136, Animation::ON_END_CONTINUE, 250);
 	aniTank.use(0);
