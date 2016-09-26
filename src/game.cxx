@@ -55,7 +55,7 @@ Game::Game()
 	// creates renderer
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-	// gets the window surface
+	// gets the window surface, this code return NULL on Android
 	surfaceWindow = SDL_GetWindowSurface(window);
 
 	// opens fonts
@@ -113,7 +113,11 @@ void Game::run()
 	unsigned int fpsTime = 0;
 	unsigned int timeLast = SDL_GetTicks();
 	unsigned int timeUsed = SDL_GetTicks() - timeLast;
+#ifdef __ANDROID__
+	bool active = true;
+#else
 	bool active = false;
+#endif
 	bool exit = false;
 
 	SDL_Log("start");
@@ -121,6 +125,8 @@ void Game::run()
 	while (!exit) {
 		if (active) {
 			// clears screen
+			int w, h;
+			SDL_GetRendererOutputSize(renderer, &w, &h);
 			SDL_RenderClear(renderer);
 
 			// render current scene
@@ -158,14 +164,14 @@ void Game::run()
 
 			// draws FPS
 			SDL_Point point = {
-				surfaceWindow->w - (drawNumberSmall->getWidth() * 4),
-				surfaceWindow->h - drawNumberSmall->getHeight()
+				w - (drawNumberSmall->getWidth() * 4),
+				h - drawNumberSmall->getHeight()
 			};
 			drawNumberSmall->draw(renderer, fps, 4, point);
 
 			// outputs to screen
 			SDL_RenderPresent(renderer);
-		}
+			}
 
 		// polls events until queue empty
 		while (SDL_PollEvent(&e)) {
@@ -193,8 +199,8 @@ void Game::run()
 				exit = true;
 			}
 		}
-	}
+		}
 
 	SDL_Log("exit");
-}
+	}
 

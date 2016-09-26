@@ -22,7 +22,11 @@ SceneTitle::SceneTitle()
 {
 	SDL_Log("SceneTitle::SceneTitle()");
 	Game *game = Game::instance();
+#ifdef __ANDROID__
+	surfaceTitle = TTF_RenderUTF8_Blended(game->getFontLarge(), "Tankdroid", { 0x80, 0xCC, 0x80 });
+#else
 	surfaceTitle = TTF_RenderUTF8_Blended(game->getFontLarge(), "Tankman", { 0x80, 0xCC, 0x80 });
+#endif
 	textureTitle = SDL_CreateTextureFromSurface(game->getRenderer(), surfaceTitle);
 
 	spriteTank = new Sprite(game->getRenderer(), TANK_RES("tank.png"), 16, 16);
