@@ -10,11 +10,17 @@ This game is NOT a fun game.  It's just a simple game to let you learn how to wr
 **Tools and Library Usage**
 
  - Microsoft Visual Studio 2015 Community
- - libSDL 2.0.4 and sub-projects
- 
+ - SDL2 v.2.0.4
+ - SDL2_image v.2.0.1
+ - SDL2_ttf v.2.0.14
+
 **Compiling**
 
- - ...
+ - download and unzip SDL2, SDL2_image, SDL2_ttf
+ - change sub-directory SDL*\VisualC
+ - open Visual Studio and build SDLs
+ - open Tankman and set directories to compile
+ - that's all
 
 **Known Bugs**
 

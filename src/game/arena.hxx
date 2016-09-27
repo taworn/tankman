@@ -41,9 +41,15 @@ public:
 	 */
 	void startBattle();
 
+	/**
+	 * Draws a battle scene.
+	 */
+	void draw();
+
 private:
 	int score;
 	int stage;
+	Sprite *spriteMap;
 	Map *map;
 
 	Arena(const Arena&);

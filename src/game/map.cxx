@@ -11,87 +11,76 @@
 
 Map::~Map()
 {
-	if (imageData)
-		delete[] imageData;
-	if (mapData)
-		delete[] mapData;
+	if (blockData)
+		delete[] blockData;
 }
 
 Map::Map()
 	: width(), height()
-	, mapData(), imageData()
+	, startHero()
+	, blockData()
 {
 }
 
 bool Map::load(const char *fileName)
 {
 	// opens file
-	FILE *fp = fopen(fileName, "r");
+	SDL_RWops *fp = SDL_RWFromFile(fileName, "rb");
 	if (!fp) {
 		SDL_Log("Cannot open file.");
 		return false;
 	}
 
 	// checks file header, 8 bytes
-	char check[8] = { 0x43, 0x41, 0x50, 0x4D, 0x41, 0x50, 0x00, 0x00, };
+        // header=TANK####, # = ASCII 0
+        char check[8] = { 0x54, 0x41, 0x4E, 0x4B, 0x00, 0x00, 0x00, 0x00, };
 	char header[8] = { 0 };
-	if (fread(header, 1, 8, fp) != 8) {
+	if (SDL_RWread(fp, header, 1, 8) != 8) {
 		SDL_Log("Header is not acceptable.");
-		fclose(fp);
+		SDL_RWclose(fp);
 		return false;
 	}
 	for (int i = 0; i < 8; i++) {
 		if (header[i] != check[i]) {
 			SDL_Log("Header is not acceptable.");
-			fclose(fp);
+			SDL_RWclose(fp);
 			return false;
 		}
 	}
 
 	// reads header information
-	// 6 int = width, height, divo start width, divo start height, pacman start width, pacman start height
-	int32_t buffer[6] = { 0 };
-	if (fread(buffer, 1, 6 * sizeof(int32_t), fp) != 6 * sizeof(int32_t)) {
+	// 4 int = width, height, hero x and hero y
+	int32_t buffer[4] = { 0 };
+	if (SDL_RWread(fp, buffer, sizeof(int32_t), 4) != 4) {
 		SDL_Log("Not enough data to read.");
-		fclose(fp);
+		SDL_RWclose(fp);
 		return false;
 	}
 	int w = buffer[0];
 	int h = buffer[1];
-	int size = w * h;
+	int x = buffer[2];
+	int y = buffer[3];
 
-	// reads map data
-	char *mapData = new char[size];
-	if (fread(mapData, 1, size * sizeof(char), fp) != size * sizeof(char)) {
+	// reads block data
+	size_t size = w * h;
+	int32_t *blockData = new int32_t[size];
+	if (SDL_RWread(fp, blockData, sizeof(int32_t), size) != size) {
 		SDL_Log("Not enough data to read.");
-		fclose(fp);
+		SDL_RWclose(fp);
 		return false;
 	}
 
-	// reads image data
-	int *imageData = new int[size];
-	for (int i = 0; i < size; i++) {
-		int32_t image;
-		if (fread(&image, 1, sizeof(int32_t), fp) != sizeof(int32_t)) {
-			SDL_Log("Not enough data to read.");
-			fclose(fp);
-			return false;
-		}
-		imageData[i] = (int)image;
-	}
-
 	// closes file
-	fclose(fp);
+	SDL_RWclose(fp);
 
 	// copying
 	this->width = w;
 	this->height = h;
-	if (this->mapData)
-		delete[] this->mapData;
-	if (this->imageData)
-		delete[] this->imageData;
-	this->mapData = mapData;
-	this->imageData = imageData;
+	this->startHero.x = x;
+	this->startHero.y = y;
+	if (this->blockData)
+		delete[] this->blockData;
+	this->blockData = blockData;
 
 	return true;
 }

@@ -30,12 +30,12 @@ public:
 
 	int getWidth() const { return width; }
 	int getHeight() const { return height; }
-	int* getImageData() { return imageData; }
+	int* getImageData() { return NULL; }
 
 private:
 	int width, height;
-	char *mapData;
-	int *imageData;
+	SDL_Point startHero;
+	int32_t *blockData;
 
 	Map(const Map&);
 	Map& operator=(const Map&);
