@@ -17,9 +17,11 @@ This game is NOT a fun game.  It's just a simple game to let you learn how to wr
 **Compiling**
 
  - download and unzip SDL2, SDL2_image, SDL2_ttf
- - change sub-directory SDL*\VisualC
- - open Visual Studio and build SDLs
- - open Tankman and set directories to compile
+ - change sub-directory to SDL*\VisualC
+ - open Visual Studio
+ - load SDL* and build it
+ - load Tankman and set include and library paths to compile
+ - compile and run
  - that's all
 
 **Known Bugs**

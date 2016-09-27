@@ -24,6 +24,7 @@
     <ClCompile Include="src\game.cxx" />
     <ClCompile Include="src\game\arena.cxx" />
     <ClCompile Include="src\game\map.cxx" />
+    <ClCompile Include="src\game\movable.cxx" />
     <ClCompile Include="src\main.cxx" />
     <ClCompile Include="src\menu.cxx" />
     <ClCompile Include="src\scenes\scene.cxx" />
@@ -41,6 +42,7 @@
     <ClInclude Include="src\game\arena.hxx" />
     <ClInclude Include="src\game\common.hxx" />
     <ClInclude Include="src\game\map.hxx" />
+    <ClInclude Include="src\game\movable.hxx" />
     <ClInclude Include="src\menu.hxx" />
     <ClInclude Include="src\scenes\scene.hxx" />
     <ClInclude Include="src\scenes\scene_lost.hxx" />

@@ -69,6 +69,9 @@
     <ClCompile Include="src\drawnum.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\movable.cxx">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game.hxx">
@@ -112,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="src\drawnum.hxx">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\movable.hxx">
+      <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

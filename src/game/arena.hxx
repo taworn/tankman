@@ -44,13 +44,14 @@ public:
 	/**
 	 * Draws a battle scene.
 	 */
-	void draw();
+	void draw(unsigned int timeUsed);
 
 private:
 	int score;
 	int stage;
-	Sprite *spriteMap;
+	Sprite *spriteTank;
 	Map *map;
+	Movable *hero;
 
 	Arena(const Arena&);
 	Arena& operator=(const Arena&);
