@@ -25,6 +25,8 @@
     <ClCompile Include="src\game\arena.cxx" />
     <ClCompile Include="src\game\map.cxx" />
     <ClCompile Include="src\game\movable.cxx" />
+    <ClCompile Include="src\game\tank.cxx" />
+    <ClCompile Include="src\game\tankhero.cxx" />
     <ClCompile Include="src\main.cxx" />
     <ClCompile Include="src\menu.cxx" />
     <ClCompile Include="src\scenes\scene.cxx" />
@@ -43,6 +45,8 @@
     <ClInclude Include="src\game\common.hxx" />
     <ClInclude Include="src\game\map.hxx" />
     <ClInclude Include="src\game\movable.hxx" />
+    <ClInclude Include="src\game\tank.hxx" />
+    <ClInclude Include="src\game\tankhero.hxx" />
     <ClInclude Include="src\menu.hxx" />
     <ClInclude Include="src\scenes\scene.hxx" />
     <ClInclude Include="src\scenes\scene_lost.hxx" />

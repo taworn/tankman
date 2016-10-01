@@ -5,9 +5,6 @@
 #ifndef GAME_MAP_HXX
 #define GAME_MAP_HXX
 
-class Movable;
-class Arena;
-
 /**
  * A map class.
  */
@@ -56,8 +53,8 @@ private:
 
 	// movables and bullets
 	int countTank;
-	Movable movHero;
-	Movable movTanks[64];
+	Tank movTanks[64];
+	TankHero movHero;
 	//Bullet bullets[128];
 	//Item item[16];
 

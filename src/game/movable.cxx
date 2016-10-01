@@ -18,6 +18,7 @@ Movable::Movable()
 	, timePerDead(250), timePerMove(150)
 	, timeUsed(0)
 	, lock()
+	, hp(0)
 	, ani()
 	, arena(Game::instance()->getArena())
 {
@@ -25,14 +26,6 @@ Movable::Movable()
 	rect.y = 0;
 	rect.w = 64;
 	rect.h = 64;
-
-	ani.add(ACTION_DEAD, 0, 2, Animation::ON_END_HIDDEN, timePerDead);
-	ani.add(ACTION_IDLE, 0, 2, Animation::ON_END_CONTINUE, timePerMove);
-	ani.add(ACTION_MOVE_LEFT, 2, 4, Animation::ON_END_CONTINUE, timePerMove);
-	ani.add(ACTION_MOVE_RIGHT, 6, 8, Animation::ON_END_CONTINUE, timePerMove);
-	ani.add(ACTION_MOVE_UP, 0, 2, Animation::ON_END_CONTINUE, timePerMove);
-	ani.add(ACTION_MOVE_DOWN, 4, 6, Animation::ON_END_CONTINUE, timePerMove);
-	ani.use(ACTION_IDLE);
 }
 
 void Movable::move(int dir)
@@ -101,7 +94,7 @@ void Movable::draw(SDL_Renderer *renderer, Sprite *spriteTank, Sprite *spriteMis
 	SDL_Point point;
 	point.x = this->rect.x - viewport->x;
 	point.y = this->rect.y - viewport->y;
-	
+
 	SDL_Rect rect;
 	rect.x = point.x;
 	rect.y = point.y;

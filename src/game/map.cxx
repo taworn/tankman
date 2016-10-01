@@ -133,12 +133,14 @@ bool Map::load(const char *fileName)
 			if (block >= 100 && block < 140) {
 				int x = i * 2 * 32;
 				int y = j * 2 * 32;
-				movTanks[countTank++].setXY(x, y);
+				int tank = (block % 10) & 0x07;
+				int color = (block % 100) / 10;
+				movTanks[countTank++].init(x, y, tank, color);
 			}
 			else if (block == BLOCK_HERO) {
 				int x = i * 2 * 32;
 				int y = j * 2 * 32;
-				movHero.setXY(x, y);
+				movHero.init(x, y);
 			}
 		}
 	}
@@ -269,15 +271,15 @@ void Map::draw(SDL_Renderer *renderer, int timeUsed)
 		}
 	}
 
-	// draws hero
-	movHero.play(timeUsed);
-	movHero.draw(renderer, spriteTank, spriteMisc, &viewport);
-
 	// draws enemy tanks
 	for (int i = 0; i < countTank; i++) {
 		movTanks[i].play(timeUsed);
 		movTanks[i].draw(renderer, spriteTank, spriteMisc, &viewport);
 	}
+
+	// draws hero
+	movHero.play(timeUsed);
+	movHero.draw(renderer, spriteTank, spriteMisc, &viewport);
 
 	// draws layer map
 	for (int j = 0; j < getUnitHeight(); j++) {

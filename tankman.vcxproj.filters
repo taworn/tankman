@@ -72,6 +72,12 @@
     <ClCompile Include="src\game\movable.cxx">
       <Filter>Source Files\game</Filter>
     </ClCompile>
+    <ClCompile Include="src\game\tank.cxx">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\tankhero.cxx">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game.hxx">
@@ -117,6 +123,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\game\movable.hxx">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\tank.hxx">
+      <Filter>Header Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\tankhero.hxx">
       <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>
