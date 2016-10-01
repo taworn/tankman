@@ -6,6 +6,7 @@
 #define GAME_MOVABLE_HXX
 
 class Map;
+class Arena;
 
 /**
  * A movable class.
@@ -64,8 +65,12 @@ public:
 	int getY() const { return rect.y; }
 	int getUnitX() const { return rect.x / 32; }
 	int getUnitY() const { return rect.y / 32; }
+	const SDL_Rect getRect() const { return rect; }
+	void setXY(int x, int y) { rect.x = x; rect.y = y; }
 
 	bool isMovingAction() const { return action >= ACTION_MOVE_LEFT && action <= ACTION_MOVE_DOWN; }
+
+	Arena* getArena() const { return arena; }
 
 private:
 	int action;         // see ACTION_* constants
@@ -80,6 +85,7 @@ private:
 	SDL_Point target;    // move to target
 	SDL_Point distance;  // distance between target and point
 	Animation ani;
+	Arena *arena;
 
 	Movable(const Movable&);
 	Movable& operator=(const Movable&);

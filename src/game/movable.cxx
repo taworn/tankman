@@ -19,6 +19,7 @@ Movable::Movable()
 	, timeUsed(0)
 	, lock()
 	, ani()
+	, arena(Game::instance()->getArena())
 {
 	rect.x = 0;
 	rect.y = 0;
@@ -39,33 +40,30 @@ void Movable::move(int dir)
 	if (!isAlive())
 		return;
 	if (!lock) {
-		distance.x = 0;
-		distance.y = 0;
 		if (dir == MOVE_LEFT) {
 			action = ACTION_MOVE_LEFT;
 			ani.use(ACTION_MOVE_LEFT);
-			distance.x = -32;
 		}
 		else if (dir == MOVE_RIGHT) {
 			action = ACTION_MOVE_RIGHT;
 			ani.use(ACTION_MOVE_RIGHT);
-			distance.x = 32;
 		}
 		else if (dir == MOVE_UP) {
 			action = ACTION_MOVE_UP;
 			ani.use(ACTION_MOVE_UP);
-			distance.y = -32;
 		}
 		else if (dir == MOVE_DOWN) {
 			action = ACTION_MOVE_DOWN;
 			ani.use(ACTION_MOVE_DOWN);
-			distance.y = 32;
 		}
-		target.x = rect.x + distance.x;
-		target.y = rect.y + distance.y;
-		timeUsed = 0;
-		lock = true;
-		nextDirection = 0;
+
+		if (getArena()->getMap()->canMove(this, dir, &target)) {
+			distance.x = target.x - rect.x;
+			distance.y = target.y - rect.y;
+			timeUsed = 0;
+			lock = true;
+			nextDirection = 0;
+		}
 	}
 	else {
 #ifdef __ANDROID__
