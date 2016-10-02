@@ -8,6 +8,7 @@
 #include "movable.hxx"
 #include "tank.hxx"
 #include "tankhero.hxx"
+#include "bullet.hxx"
 #include "map.hxx"
 #include "arena.hxx"
 

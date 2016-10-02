@@ -32,11 +32,6 @@ public:
 	int getStage() const { return stage; }
 
 	/**
-	 * Gets map.
-	 */
-	Map* getMap() { return map; }
-
-	/**
 	 * Starts batlle.
 	 */
 	void startBattle();
@@ -46,12 +41,12 @@ public:
 	 */
 	void draw(int timeUsed);
 
+	Map* getMap() { return map; }
+
 private:
 	int score;
 	int stage;
-	Sprite *spriteTank;
 	Map *map;
-	Movable *hero;
 
 	Arena(const Arena&);
 	Arena& operator=(const Arena&);

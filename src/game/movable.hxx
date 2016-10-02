@@ -36,12 +36,12 @@ public:
 	/**
 	 * Moves by direction, use constant MOVE_*.
 	 */
-	virtual void move(int dir);
+	void move(int dir);
 
 	/**
 	 * Plays animation after call move().
 	 */
-	virtual void play(int timeUsed);
+	void play(int timeUsed);
 
 	/**
 	 * Checks whether movable is alive or dead.
@@ -54,9 +54,14 @@ public:
 	bool isIdle() const { return action == ACTION_IDLE; }
 
 	/**
+	 * Fires bullet.
+	 */
+	void fire();
+
+	/**
 	 * Draws movable.
 	 */
-	void draw(SDL_Renderer *renderer, Sprite *spriteTank, Sprite *spriteMisc, SDL_Rect *viewport);
+	void draw(SDL_Renderer *renderer, Sprite *spriteTank, Sprite *spriteMisc, SDL_Rect *viewport, int timeUsed);
 
 	int getX() const { return rect.x; }
 	int getY() const { return rect.y; }
@@ -65,7 +70,7 @@ public:
 	const SDL_Rect getRect() const { return rect; }
 
 	bool isMovingAction() const { return action >= ACTION_MOVE_LEFT && action <= ACTION_MOVE_DOWN; }
-
+	
 	int getHP() const { return hp; }
 
 protected:
@@ -87,7 +92,9 @@ private:
 	int timeUsed;       // time in animation
 	bool lock;          // lock when perform animation
 
-	int hp;  // hit point
+	int hp;        // hit point
+	int rof;       // rate of fire
+	int fireTime;  // last fired time
 
 	SDL_Rect rect;       // rectangle (x, y, w, h) for this unit, relative with (0, 0) of map
 	SDL_Point target;    // move to target

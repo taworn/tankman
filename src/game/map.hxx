@@ -32,6 +32,11 @@ public:
 	bool canMove(Movable *movable, int direction, SDL_Point *pt);
 
 	/**
+	 * Adds bullet.
+	 */
+	bool addBullet(int x, int y, int dir);
+
+	/**
 	 * Draws map.
 	 */
 	void draw(SDL_Renderer *renderer, int timeUsed);
@@ -53,9 +58,10 @@ private:
 
 	// movables and bullets
 	int countTank;
+	int countBullets;
 	Tank movTanks[64];
 	TankHero movHero;
-	//Bullet bullets[128];
+	Bullet *bullets[64];
 	//Item item[16];
 
 	static const int BLOCK_PASS = 0;

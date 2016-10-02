@@ -11,6 +11,8 @@
 
 Map::~Map()
 {
+	for (int i = 0; i < countBullets; i++)
+		delete bullets[i];
 	if (imageMap)
 		delete[] imageMap;
 	if (blockMap)
@@ -35,7 +37,7 @@ Map::Map()
 	SDL_Renderer *renderer = Game::instance()->getRenderer();
 	spriteMap = new Sprite(renderer, TANK_RES("map.png"), 8, 8);
 	spriteTank = new Sprite(renderer, TANK_RES("tank.png"), 16, 16);
-	spriteMisc = new Sprite(renderer, TANK_RES("tank.png"), 1, 1);
+	spriteMisc = new Sprite(renderer, TANK_RES("misc.png"), 8, 8);
 }
 
 bool Map::load(const char *fileName)
@@ -89,15 +91,18 @@ bool Map::load(const char *fileName)
 	SDL_RWclose(fp);
 
 	// copying
-	this->width = w;
-	this->height = h;
 	if (this->blockMap)
 		delete[] this->blockMap;
 	if (this->imageMap)
 		delete[] this->imageMap;
+	for (int i = 0; i < countBullets; i++)
+		delete bullets[i];
+	this->width = w;
+	this->height = h;
 	this->blockMap = new char[size * 4];
 	this->imageMap = new int[size * 4];
 	this->countTank = 0;
+	this->countBullets = 0;
 
 	// build map with unit as 32x32
 	w = width * 2;
@@ -219,6 +224,14 @@ bool Map::canMove(Movable *movable, int direction, SDL_Point *pt)
 	return false;
 }
 
+bool Map::addBullet(int x, int y, int dir)
+{
+	if (countBullets >= 64)
+		return false;
+	bullets[countBullets++] = new Bullet(x, y, dir);
+	return true;
+}
+
 void Map::draw(SDL_Renderer *renderer, int timeUsed)
 {
 	SDL_Rect viewport;
@@ -274,12 +287,19 @@ void Map::draw(SDL_Renderer *renderer, int timeUsed)
 	// draws enemy tanks
 	for (int i = 0; i < countTank; i++) {
 		movTanks[i].play(timeUsed);
-		movTanks[i].draw(renderer, spriteTank, spriteMisc, &viewport);
+		movTanks[i].draw(renderer, spriteTank, spriteMisc, &viewport, timeUsed);
 	}
 
 	// draws hero
 	movHero.play(timeUsed);
-	movHero.draw(renderer, spriteTank, spriteMisc, &viewport);
+	movHero.draw(renderer, spriteTank, spriteMisc, &viewport, timeUsed);
+
+	// bullets
+	for (int i = 0; i < countBullets; i++) {
+		// move bullet
+		bullets[i]->play(timeUsed);
+		bullets[i]->draw(renderer, spriteMisc, &viewport, timeUsed);
+	}
 
 	// draws layer map
 	for (int j = 0; j < getUnitHeight(); j++) {

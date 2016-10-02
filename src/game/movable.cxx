@@ -19,6 +19,7 @@ Movable::Movable()
 	, timeUsed(0)
 	, lock()
 	, hp(0)
+	, rof(100), fireTime(100)
 	, ani()
 	, arena(Game::instance()->getArena())
 {
@@ -89,7 +90,41 @@ void Movable::play(int timeUsed)
 	}
 }
 
-void Movable::draw(SDL_Renderer *renderer, Sprite *spriteTank, Sprite *spriteMisc, SDL_Rect *viewport)
+void Movable::fire()
+{
+	// not enough fire time?
+	if (fireTime < rof)
+		return;
+
+	// check direction
+	int x, y;
+	if (action == ACTION_MOVE_LEFT) {
+		x = getX();
+		y = getY() + 32;
+	}
+	else if (action == ACTION_MOVE_RIGHT) {
+		x = getX() + 64;
+		y = getY() + 32;
+	}
+	else if (action == ACTION_MOVE_UP) {
+		x = getX() + 32;
+		y = getY();
+	}
+	else if (action == ACTION_MOVE_DOWN) {
+		x = getX() + 32;
+		y = getY() + 64;
+	}
+	else {
+		// direction == 0, just keep nothing for now
+		return;
+	}
+
+	// if bullets is not full maximum limit?
+	if (getArena()->getMap()->addBullet(x, y, action))
+		fireTime = 0;
+}
+
+void Movable::draw(SDL_Renderer *renderer, Sprite *spriteTank, Sprite *spriteMisc, SDL_Rect *viewport, int timeUsed)
 {
 	SDL_Point point;
 	point.x = this->rect.x - viewport->x;
@@ -101,5 +136,7 @@ void Movable::draw(SDL_Renderer *renderer, Sprite *spriteTank, Sprite *spriteMis
 	rect.w = 64;
 	rect.h = 64;
 	ani.draw(renderer, spriteTank, &rect);
+
+	fireTime += timeUsed;
 }
 
