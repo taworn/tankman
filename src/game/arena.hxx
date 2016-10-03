@@ -14,7 +14,7 @@ public:
 	/**
 	 * Destructs the arena.
 	 */
-	virtual ~Arena();
+	~Arena();
 
 	/**
 	 * Constructs the arena.

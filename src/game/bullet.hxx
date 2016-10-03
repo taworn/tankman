@@ -22,6 +22,16 @@ public:
 	Bullet(int x, int y, int dir);
 
 	/**
+	 * Checks it's should be delete.
+	 */
+	bool shouldBeDelete();
+
+	/**
+	 * Checks if obstacle is exists or not.
+	 */
+	bool check();
+
+	/**
 	 * Plays animation.
 	 */
 	void play(int timeUsed);
@@ -32,9 +42,15 @@ public:
 	void draw(SDL_Renderer *renderer, Sprite *spriteMisc, SDL_Rect *viewport, int timeUsed);
 
 private:
-	SDL_Point point;
 	int direction;
 	int imageIndex;
+	int timePerMove;
+	int timeUsed;
+	bool deleted;
+	SDL_Point point;
+	SDL_Point target;
+	SDL_Point distance;
+	Arena *arena;
 
 	Bullet(const Bullet&);
 	Bullet& operator=(const Bullet&);

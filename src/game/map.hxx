@@ -32,9 +32,19 @@ public:
 	bool canMove(Movable *movable, int direction, SDL_Point *pt);
 
 	/**
+	 * Checks if bullet direction is can be pass.
+	 */
+	bool canShot(int x, int y, int direction, SDL_Point *pt);
+
+	/**
+	 * Checks if position, in pixels, is in bounds or not.
+	 */
+	bool inBounds(int x, int y) { return x >= 0 && x < getPixelWidth() && y >= 0 && y < getPixelHeight(); }
+
+	/**
 	 * Adds bullet.
 	 */
-	bool addBullet(int x, int y, int dir);
+	bool addBullet(int x, int y, int action);
 
 	/**
 	 * Draws map.
@@ -43,6 +53,8 @@ public:
 
 	int getUnitWidth() const { return width * 2; }
 	int getUnitHeight() const { return height * 2; }
+	int getPixelWidth() const { return width * 64; }
+	int getPixelHeight() const { return height * 64; }
 
 	Movable* getHero() { return &movHero; }
 
@@ -75,6 +87,8 @@ private:
 	void rawToMap(int raw, char *block, int *image);
 	bool blockIsPass(int unitX, int unitY);
 	bool blockHasEnemy(SDL_Rect *rect);
+	bool blockIsShootPass(int unitX, int unitY);
+	bool blockShootEnemy(int x, int y);
 
 	Map(const Map&);
 	Map& operator=(const Map&);

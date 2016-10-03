@@ -16,10 +16,9 @@ ScenePlay::~ScenePlay()
 }
 
 ScenePlay::ScenePlay()
+	: arena(Game::instance()->getArena())
 {
 	SDL_Log("ScenePlay::ScenePlay()");
-
-	arena = Game::instance()->getArena();
 	arena->startBattle();
 }
 
@@ -55,7 +54,6 @@ bool ScenePlay::handleKey(SDL_KeyboardEvent key)
 
 void ScenePlay::render(int timeUsed)
 {
-	Game *game = Game::instance();
-	game->getArena()->draw(timeUsed);
+	arena->draw(timeUsed);
 }
 

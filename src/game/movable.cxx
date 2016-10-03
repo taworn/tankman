@@ -13,13 +13,13 @@ Movable::~Movable()
 }
 
 Movable::Movable()
-	: action(ACTION_IDLE)
+	: action(ACTION_DEAD)
 	, direction(0), nextDirection(0)
-	, timePerDead(250), timePerMove(150)
+	, timePerDead(250), timePerMove(250)
 	, timeUsed(0)
 	, lock()
 	, hp(0)
-	, rof(100), fireTime(100)
+	, rof(250), fireTime(250), fireAfterLock(false)
 	, ani()
 	, arena(Game::instance()->getArena())
 {
@@ -27,6 +27,7 @@ Movable::Movable()
 	rect.y = 0;
 	rect.w = 64;
 	rect.h = 64;
+	ani.add(ACTION_DEAD, 8, 11, Animation::ON_END_HIDDEN, timePerDead);
 }
 
 void Movable::move(int dir)
@@ -84,6 +85,10 @@ void Movable::play(int timeUsed)
 			rect.x = target.x;
 			rect.y = target.y;
 			lock = false;
+			if (fireAfterLock) {
+				fireAfterLock = false;
+				fire();
+			}
 			if (nextDirection > 0)
 				move(nextDirection);
 		}
@@ -92,6 +97,11 @@ void Movable::play(int timeUsed)
 
 void Movable::fire()
 {
+	if (lock) {
+		fireAfterLock = true;
+		return;
+	}
+
 	// not enough fire time?
 	if (fireTime < rof)
 		return;
@@ -103,7 +113,7 @@ void Movable::fire()
 		y = getY() + 32;
 	}
 	else if (action == ACTION_MOVE_RIGHT) {
-		x = getX() + 64;
+		x = getX() + 63;
 		y = getY() + 32;
 	}
 	else if (action == ACTION_MOVE_UP) {
@@ -112,16 +122,21 @@ void Movable::fire()
 	}
 	else if (action == ACTION_MOVE_DOWN) {
 		x = getX() + 32;
-		y = getY() + 64;
+		y = getY() + 63;
 	}
 	else {
-		// direction == 0, just keep nothing for now
 		return;
 	}
 
 	// if bullets is not full maximum limit?
 	if (getArena()->getMap()->addBullet(x, y, action))
 		fireTime = 0;
+}
+
+void Movable::dead()
+{
+	action = ACTION_DEAD;
+	ani.use(ACTION_DEAD);
 }
 
 void Movable::draw(SDL_Renderer *renderer, Sprite *spriteTank, Sprite *spriteMisc, SDL_Rect *viewport, int timeUsed)
@@ -135,7 +150,10 @@ void Movable::draw(SDL_Renderer *renderer, Sprite *spriteTank, Sprite *spriteMis
 	rect.y = point.y;
 	rect.w = 64;
 	rect.h = 64;
-	ani.draw(renderer, spriteTank, &rect);
+	if (isAlive())
+		ani.draw(renderer, spriteTank, &rect);
+	else
+		ani.draw(renderer, spriteMisc, &rect);
 
 	fireTime += timeUsed;
 }

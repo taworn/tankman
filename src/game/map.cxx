@@ -31,7 +31,7 @@ Map::Map()
 	, spriteMisc(NULL)
 	, width(), height()
 	, blockMap(NULL), imageMap(NULL)
-	, countTank(0)
+	, countTank(0), countBullets(0)
 	, movHero()
 {
 	SDL_Renderer *renderer = Game::instance()->getRenderer();
@@ -180,7 +180,7 @@ bool Map::canMove(Movable *movable, int direction, SDL_Point *pt)
 		if (next < getUnitWidth()) {
 			if (blockIsPass(next, unitY) && blockIsPass(next, unitY + 1)) {
 				SDL_Rect rect = movable->getRect();
-				rect.x = next * 32;
+				rect.x = (next - 1) * 32;
 				if (!blockHasEnemy(&rect)) {
 					pt->x = movable->getX() + 32;
 					pt->y = movable->getY();
@@ -212,7 +212,7 @@ bool Map::canMove(Movable *movable, int direction, SDL_Point *pt)
 		if (next < getUnitHeight()) {
 			if (blockIsPass(unitX, next) && blockIsPass(unitX + 1, next)) {
 				SDL_Rect rect = movable->getRect();
-				rect.y = next * 32;
+				rect.y = (next - 1) * 32;
 				if (!blockHasEnemy(&rect)) {
 					pt->x = movable->getX();
 					pt->y = movable->getY() + 32;
@@ -224,11 +224,62 @@ bool Map::canMove(Movable *movable, int direction, SDL_Point *pt)
 	return false;
 }
 
-bool Map::addBullet(int x, int y, int dir)
+bool Map::canShot(int x, int y, int action, SDL_Point *pt)
+{
+	if (action == Movable::ACTION_MOVE_LEFT) {
+		int current = x / 32;
+		int unitY = y / 32;
+		int next = current - 1;
+		if (next >= 0) {
+			if (!blockIsShootPass(next, unitY - 1))
+				return false;
+			if (!blockIsShootPass(next, unitY))
+				return false;
+		}
+	}
+	else if (action == Movable::ACTION_MOVE_RIGHT) {
+		int current = x / 32;
+		int unitY = y / 32;
+		int next = current + 1;
+		if (next < getUnitWidth()) {
+			if (!blockIsShootPass(next, unitY - 1))
+				return false;
+			if (!blockIsShootPass(next, unitY))
+				return false;
+		}
+	}
+	else if (action == Movable::ACTION_MOVE_UP) {
+		int unitX = x / 32;
+		int current = y / 32;
+		int next = current - 1;
+		if (next >= 0) {
+			if (!blockIsShootPass(unitX - 1, next))
+				return false;
+			if (!blockIsShootPass(unitX, next))
+				return false;
+		}
+	}
+	else if (action == Movable::ACTION_MOVE_DOWN) {
+		int unitX = x / 32;
+		int current = y / 32;
+		int next = current + 1;
+		if (next < getUnitHeight()) {
+			if (!blockIsShootPass(unitX - 1, next))
+				return false;
+			if (!blockIsShootPass(unitX, next))
+				return false;
+		}
+	}
+	if (blockShootEnemy(x, y))
+		return false;
+	return true;
+}
+
+bool Map::addBullet(int x, int y, int action)
 {
 	if (countBullets >= 64)
 		return false;
-	bullets[countBullets++] = new Bullet(x, y, dir);
+	bullets[countBullets++] = new Bullet(x, y, action);
 	return true;
 }
 
@@ -297,8 +348,20 @@ void Map::draw(SDL_Renderer *renderer, int timeUsed)
 	// bullets
 	for (int i = 0; i < countBullets; i++) {
 		// move bullet
-		bullets[i]->play(timeUsed);
-		bullets[i]->draw(renderer, spriteMisc, &viewport, timeUsed);
+		if (bullets[i]->check()) {
+			bullets[i]->play(timeUsed);
+			bullets[i]->draw(renderer, spriteMisc, &viewport, timeUsed);
+		}
+	}
+	int i = countBullets;
+	while (i > 0) {
+		i--;
+		if (bullets[i]->shouldBeDelete()) {
+			delete bullets[i];
+			for (int j = i; j < countBullets - 1; j++)
+				bullets[j] = bullets[j + 1];
+			countBullets--;
+		}
 	}
 
 	// draws layer map
@@ -364,10 +427,53 @@ bool Map::blockHasEnemy(SDL_Rect *rect)
 {
 	int i = 0;
 	while (i < countTank) {
-		SDL_Rect enemy = movTanks[i].getRect();
-		SDL_Rect result;
-		if (SDL_IntersectRect(rect, &enemy, &result))
-			return true;
+		if (movTanks[i].isAlive()) {
+			SDL_Rect enemy = movTanks[i].getRect();
+			SDL_Rect result;
+			if (SDL_IntersectRect(rect, &enemy, &result))
+				return true;
+		}
+		i++;
+	}
+	return false;
+}
+
+bool Map::blockIsShootPass(int unitX, int unitY)
+{
+	int block = blockMap[unitY * getUnitWidth() + unitX];
+	switch (block) {
+	default:
+	case BLOCK_PASS:
+	case BLOCK_TREE:
+	case BLOCK_WATER:
+		return true;
+
+	case BLOCK_BRICK:
+		// remove block
+		blockMap[unitY * getUnitWidth() + unitX] = 0;
+		imageMap[unitY * getUnitWidth() + unitX] = 0;
+		return false;
+
+	case BLOCK_STEEL:
+		return false;
+	}
+}
+
+bool Map::blockShootEnemy(int x, int y)
+{
+	int i = 0;
+	while (i < countTank) {
+		if (movTanks[i].isAlive()) {
+			SDL_Rect enemy = movTanks[i].getRect();
+			enemy.x += 16;
+			enemy.y += 16;
+			enemy.w -= 32;
+			enemy.h -= 32;
+			if (x >= enemy.x && x < enemy.x + enemy.w && y >= enemy.y && y < enemy.y + enemy.h) {
+				movTanks[i].dead();
+				return true;
+			}
+		}
 		i++;
 	}
 	return false;

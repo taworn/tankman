@@ -12,11 +12,10 @@ class Movable
 {
 public:
 	static const int ACTION_DEAD = 0;
-	static const int ACTION_IDLE = 1;
-	static const int ACTION_MOVE_LEFT = 2;
-	static const int ACTION_MOVE_RIGHT = 3;
-	static const int ACTION_MOVE_UP = 4;
-	static const int ACTION_MOVE_DOWN = 5;
+	static const int ACTION_MOVE_LEFT = 1;
+	static const int ACTION_MOVE_RIGHT = 2;
+	static const int ACTION_MOVE_UP = 3;
+	static const int ACTION_MOVE_DOWN = 4;
 
 	static const int MOVE_LEFT = 1;
 	static const int MOVE_RIGHT = 2;
@@ -46,17 +45,22 @@ public:
 	/**
 	 * Checks whether movable is alive or dead.
 	 */
-	bool isAlive() const { return action >= ACTION_IDLE; }
+	bool isAlive() const { return action > ACTION_DEAD; }
 
 	/**
 	 * Checks whether movable is idling or busing.
 	 */
-	bool isIdle() const { return action == ACTION_IDLE; }
+	bool isIdle() const { return action > ACTION_DEAD && !lock; }
 
 	/**
 	 * Fires bullet.
 	 */
 	void fire();
+
+	/**
+	 * Deads.
+	 */
+	void dead();
 
 	/**
 	 * Draws movable.
@@ -70,13 +74,15 @@ public:
 	const SDL_Rect getRect() const { return rect; }
 
 	bool isMovingAction() const { return action >= ACTION_MOVE_LEFT && action <= ACTION_MOVE_DOWN; }
-	
+
 	int getHP() const { return hp; }
 
 protected:
+	void setAction(int action) { this->action = action; }
 	void setXY(int x, int y) { rect.x = x; rect.y = y; }
-
 	void setTimes(int timePerDead, int timePerMove) { this->timePerDead = timePerDead; this->timePerMove = timePerMove; }
+	void setROF(int rof) { this->rof = rof; }
+
 	int getTimePerDead() const { return timePerDead; }
 	int getTimePerMove() const { return timePerMove; }
 
@@ -95,11 +101,13 @@ private:
 	int hp;        // hit point
 	int rof;       // rate of fire
 	int fireTime;  // last fired time
+	bool fireAfterLock;
 
 	SDL_Rect rect;       // rectangle (x, y, w, h) for this unit, relative with (0, 0) of map
 	SDL_Point target;    // move to target
 	SDL_Point distance;  // distance between target and point
 	Animation ani;
+	Animation aniDead;
 	Arena *arena;
 
 	Movable(const Movable&);
