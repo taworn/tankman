@@ -11,6 +11,10 @@
 class Arena
 {
 public:
+	static const int ITEM_GUN = 0;
+	static const int ITEM_HELMET = 1;
+	static const int ITEM_STAR = 2;
+
 	/**
 	 * Destructs the arena.
 	 */
@@ -27,9 +31,24 @@ public:
 	int getScore() const { return score; }
 
 	/**
+	 * Adds score.
+	 */
+	void addScore(int point) { score += point; }
+
+	/**
 	 * Gets stage.
 	 */
 	int getStage() const { return stage; }
+
+	/**
+	 * Pickup item.
+	 */
+	void pickItem(int item);
+
+	/**
+	 * Boosting fire power.
+	 */
+	bool boostFirepower() const { return firepower; }
 
 	/**
 	 * Starts batlle.
@@ -41,11 +60,13 @@ public:
 	 */
 	void draw(int timeUsed);
 
-	Map* getMap() { return map; }
+	Map* getMap() const { return map; }
 
 private:
 	int score;
 	int stage;
+	bool firepower;
+	int firepowerTime;
 	Map *map;
 
 	Arena(const Arena&);

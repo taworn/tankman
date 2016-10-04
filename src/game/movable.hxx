@@ -40,7 +40,7 @@ public:
 	/**
 	 * Plays animation after call move().
 	 */
-	void play(int timeUsed);
+	virtual void play(int timeUsed);
 
 	/**
 	 * Checks whether movable is alive or dead.
@@ -60,7 +60,7 @@ public:
 	/**
 	 * Deads.
 	 */
-	void dead();
+	virtual void dead();
 
 	/**
 	 * Draws movable.
@@ -76,15 +76,23 @@ public:
 	bool isMovingAction() const { return action >= ACTION_MOVE_LEFT && action <= ACTION_MOVE_DOWN; }
 
 	int getHP() const { return hp; }
+	void decreaseHP(int dec) { hp -= dec; }
+
+	int getScore() const { return score; }
 
 protected:
+	int getTimePerDead() const { return timePerDead; }
+	int getTimePerMove() const { return timePerMove; }
+
 	void setAction(int action) { this->action = action; }
 	void setXY(int x, int y) { rect.x = x; rect.y = y; }
 	void setTimes(int timePerDead, int timePerMove) { this->timePerDead = timePerDead; this->timePerMove = timePerMove; }
+	void setHP(int hp) { this->hp = hp; }
+	void setScore(int score) { this->score = score; }
 	void setROF(int rof) { this->rof = rof; }
 
-	int getTimePerDead() const { return timePerDead; }
-	int getTimePerMove() const { return timePerMove; }
+	bool isHero() const { return hero; }
+	void setHero() { hero = true; }
 
 	Animation* getAni() { return &ani; }
 	Arena* getArena() const { return arena; }
@@ -99,9 +107,11 @@ private:
 	bool lock;          // lock when perform animation
 
 	int hp;        // hit point
+	int score;     // score when die
 	int rof;       // rate of fire
 	int fireTime;  // last fired time
 	bool fireAfterLock;
+	bool hero;
 
 	SDL_Rect rect;       // rectangle (x, y, w, h) for this unit, relative with (0, 0) of map
 	SDL_Point target;    // move to target

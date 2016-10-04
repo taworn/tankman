@@ -18,8 +18,9 @@ Movable::Movable()
 	, timePerDead(250), timePerMove(250)
 	, timeUsed(0)
 	, lock()
-	, hp(0)
+	, hp(0), score(0)
 	, rof(250), fireTime(250), fireAfterLock(false)
+	, hero(false)
 	, ani()
 	, arena(Game::instance()->getArena())
 {
@@ -80,6 +81,10 @@ void Movable::play(int timeUsed)
 			rect.x += dx;
 			rect.y += dy;
 			this->timeUsed += timeUsed;
+			if (isHero()) {
+				SDL_Rect rect = getRect();
+				getArena()->getMap()->checkItems(&rect);
+			}
 		}
 		else {
 			rect.x = target.x;
@@ -124,9 +129,8 @@ void Movable::fire()
 		x = getX() + 32;
 		y = getY() + 63;
 	}
-	else {
+	else
 		return;
-	}
 
 	// if bullets is not full maximum limit?
 	if (getArena()->getMap()->addBullet(x, y, action))

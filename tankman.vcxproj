@@ -24,6 +24,7 @@
     <ClCompile Include="src\game.cxx" />
     <ClCompile Include="src\game\arena.cxx" />
     <ClCompile Include="src\game\bullet.cxx" />
+    <ClCompile Include="src\game\item.cxx" />
     <ClCompile Include="src\game\map.cxx" />
     <ClCompile Include="src\game\movable.cxx" />
     <ClCompile Include="src\game\tank.cxx" />
@@ -45,6 +46,7 @@
     <ClInclude Include="src\game\arena.hxx" />
     <ClInclude Include="src\game\bullet.hxx" />
     <ClInclude Include="src\game\common.hxx" />
+    <ClInclude Include="src\game\item.hxx" />
     <ClInclude Include="src\game\map.hxx" />
     <ClInclude Include="src\game\movable.hxx" />
     <ClInclude Include="src\game\tank.hxx" />

@@ -47,6 +47,16 @@ public:
 	bool addBullet(int x, int y, int action);
 
 	/**
+	 * Adds item.
+	 */
+	bool addItem(int x, int y, int imageIndex);
+
+	/**
+	 * Checks items when moved.
+	 */
+	bool checkItems(SDL_Rect *rect);
+
+	/**
 	 * Draws map.
 	 */
 	void draw(SDL_Renderer *renderer, int timeUsed);
@@ -71,10 +81,13 @@ private:
 	// movables and bullets
 	int countTank;
 	int countBullets;
+	int countItems;
 	Tank movTanks[64];
 	TankHero movHero;
 	Bullet *bullets[64];
-	//Item item[16];
+	Item items[4];
+
+	Arena *arena;
 
 	static const int BLOCK_PASS = 0;
 	static const int BLOCK_TREE = 1;

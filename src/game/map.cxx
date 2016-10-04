@@ -31,8 +31,9 @@ Map::Map()
 	, spriteMisc(NULL)
 	, width(), height()
 	, blockMap(NULL), imageMap(NULL)
-	, countTank(0), countBullets(0)
+	, countTank(0), countBullets(0), countItems(0)
 	, movHero()
+	, arena(Game::instance()->getArena())
 {
 	SDL_Renderer *renderer = Game::instance()->getRenderer();
 	spriteMap = new Sprite(renderer, TANK_RES("map.png"), 8, 8);
@@ -97,12 +98,15 @@ bool Map::load(const char *fileName)
 		delete[] this->imageMap;
 	for (int i = 0; i < countBullets; i++)
 		delete bullets[i];
+	for (int i = 0; i < 4; i++)
+		items[i].done();
 	this->width = w;
 	this->height = h;
 	this->blockMap = new char[size * 4];
 	this->imageMap = new int[size * 4];
 	this->countTank = 0;
 	this->countBullets = 0;
+	this->countItems = 0;
 
 	// build map with unit as 32x32
 	w = width * 2;
@@ -283,6 +287,51 @@ bool Map::addBullet(int x, int y, int action)
 	return true;
 }
 
+bool Map::addItem(int x, int y, int imageIndex)
+{
+	if (countItems >= 4)
+		return false;
+	int i = 0;
+	while (i < 4) {
+		if (!items[i].isHappen())
+			break;
+		else
+			i++;
+	}
+	items[i].init(x, y, imageIndex);
+	countItems++;
+	return true;
+}
+
+bool Map::checkItems(SDL_Rect *rect)
+{
+	int i = 0;
+	while (i < 4) {
+		if (items[i].isHappen()) {
+			SDL_Rect r;
+			r.x = items[i].getX();
+			r.y = items[i].getY();
+			r.w = 64;
+			r.h = 64;
+			r.x += 8;
+			r.y += 8;
+			r.w -= 16;
+			r.h -= 16;
+			SDL_Rect result;
+			if (SDL_IntersectRect(rect, &r, &result)) {
+				SDL_Log("you get item :)");
+				int item = items[i].getImageIndex() - 4;
+				items[i].done();
+				countItems--;
+				arena->pickItem(item);
+				return true;
+			}
+		}
+		i++;
+	}
+	return false;
+}
+
 void Map::draw(SDL_Renderer *renderer, int timeUsed)
 {
 	SDL_Rect viewport;
@@ -333,6 +382,11 @@ void Map::draw(SDL_Renderer *renderer, int timeUsed)
 			rect.h = 32;
 			spriteMap->draw(renderer, imageMap[j * getUnitWidth() + i], &rect);
 		}
+	}
+
+	// draws items
+	for (int i = 0; i < 4; i++) {
+		items[i].draw(renderer, spriteMisc, &viewport);
 	}
 
 	// draws enemy tanks
@@ -450,7 +504,7 @@ bool Map::blockIsShootPass(int unitX, int unitY)
 
 	case BLOCK_BRICK:
 		// remove block
-		blockMap[unitY * getUnitWidth() + unitX] = 0;
+		blockMap[unitY * getUnitWidth() + unitX] = BLOCK_PASS;
 		imageMap[unitY * getUnitWidth() + unitX] = 0;
 		return false;
 
@@ -470,7 +524,10 @@ bool Map::blockShootEnemy(int x, int y)
 			enemy.w -= 32;
 			enemy.h -= 32;
 			if (x >= enemy.x && x < enemy.x + enemy.w && y >= enemy.y && y < enemy.y + enemy.h) {
-				movTanks[i].dead();
+				int dec = arena->boostFirepower() ? 4 : 1;
+				movTanks[i].decreaseHP(dec);
+				if (movTanks[i].getHP() <= 0)
+					movTanks[i].dead();
 				return true;
 			}
 		}

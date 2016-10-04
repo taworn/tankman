@@ -95,6 +95,7 @@ MODULES=\
 	$(TARGET_DIR)\scenes\scene.obj \
 	$(TARGET_DIR)\game\arena.obj \
 	$(TARGET_DIR)\game\map.obj \
+	$(TARGET_DIR)\game\item.obj \
 	$(TARGET_DIR)\game\bullet.obj \
 	$(TARGET_DIR)\game\tankhero.obj \
 	$(TARGET_DIR)\game\tank.obj \
@@ -116,6 +117,7 @@ HEADERS=\
 	$(TARGET_DIR)\game\common.hxx \
 	$(TARGET_DIR)\game\arena.hxx \
 	$(TARGET_DIR)\game\map.hxx \
+	$(TARGET_DIR)\game\item.hxx \
 	$(TARGET_DIR)\game\bullet.hxx \
 	$(TARGET_DIR)\game\tankhero.hxx \
 	$(TARGET_DIR)\game\tank.hxx \

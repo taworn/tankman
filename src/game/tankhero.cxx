@@ -17,7 +17,9 @@ void TankHero::init(int x, int y)
 	setAction(ACTION_MOVE_UP);
 	setXY(x, y);
 	setTimes(250, 150);
+	setHP(TANK_HERO_START_HP);
 	setROF(200);
+	setHero();
 	getAni()->add(ACTION_MOVE_LEFT, 2, 4, Animation::ON_END_CONTINUE, getTimePerMove());
 	getAni()->add(ACTION_MOVE_RIGHT, 6, 8, Animation::ON_END_CONTINUE, getTimePerMove());
 	getAni()->add(ACTION_MOVE_UP, 0, 2, Animation::ON_END_CONTINUE, getTimePerMove());
