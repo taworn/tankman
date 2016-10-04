@@ -14,6 +14,7 @@ SHARED=0
 SDL=D:\sdks\SDL2-2.0.4
 SDL_IMAGE=D:\sdks\SDL2_image-2.0.1
 SDL_TTF=D:\sdks\SDL2_ttf-2.0.14
+SDL_MIXER=D:\sdks\SDL2_mixer-2.0.1
 
 # source, target and output
 SOURCE_DIR=.\src
@@ -128,11 +129,11 @@ HEADERS=\
 	$(TARGET_DIR)\sprite.hxx
 
 # directories
-INCLUDE_DIRS=/I$(SDL)\include /I$(SDL_IMAGE) /I$(SDL_TTF)
-LIBRARY_DIRS=/LIBPATH:$(SDL)\lib\$(X64_TAG) /LIBPATH:$(SDL_IMAGE)\lib\$(X64_TAG) /LIBPATH:$(SDL_TTF)\lib\$(X64_TAG)
+INCLUDE_DIRS=/I$(SDL)\include /I$(SDL_IMAGE) /I$(SDL_TTF) /I$(SDL_MIXER)
+LIBRARY_DIRS=/LIBPATH:$(SDL)\lib\$(X64_TAG) /LIBPATH:$(SDL_IMAGE)\lib\$(X64_TAG) /LIBPATH:$(SDL_TTF)\lib\$(X64_TAG) /LIBPATH:$(SDL_MIXER)\lib\$(X64_TAG)
 
 # libraries
-LIBRARIES=SDL2_ttf.lib SDL2_image.lib SDL2main.lib SDL2.lib user32.lib gdi32.lib kernel32.lib
+LIBRARIES=SDL2_mixer.lib SDL2_ttf.lib SDL2_image.lib SDL2main.lib SDL2.lib user32.lib gdi32.lib kernel32.lib
 
 # executable
 OUTPUT=tankman$(SHARED_TAG)$(DEBUG_TAG).exe
@@ -158,9 +159,10 @@ prepare:
 	-copy /y $(SDL)\lib\$(X64_TAG)\SDL2.dll $(OUTPUT_DIR)
 	-copy /y $(SDL_IMAGE)\lib\$(X64_TAG)\SDL2_image.dll $(OUTPUT_DIR)
 	-copy /y $(SDL_TTF)\lib\$(X64_TAG)\SDL2_ttf.dll $(OUTPUT_DIR)
+	-copy /y $(SDL_MIXER)\lib\$(X64_TAG)\SDL2_mixer.dll $(OUTPUT_DIR)
+	-copy /y $(SDL_IMAGE)\lib\$(X64_TAG)\libpng16-16.dll $(OUTPUT_DIR)
 	-copy /y $(SDL_TTF)\lib\$(X64_TAG)\zlib1.dll $(OUTPUT_DIR)
 	-copy /y $(SDL_TTF)\lib\$(X64_TAG)\libfreetype-6.dll $(OUTPUT_DIR)
-	-copy /y $(SDL_IMAGE)\lib\$(X64_TAG)\libpng16-16.dll $(OUTPUT_DIR)
 
 check: all
 	$(OUTPUT_DIR)\$(OUTPUT)

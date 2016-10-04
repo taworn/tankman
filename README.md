@@ -13,13 +13,14 @@ This game is NOT a fun game.  It's just a simple game to let you learn how to wr
  - SDL2 v.2.0.4
  - SDL2_image v.2.0.1
  - SDL2_ttf v.2.0.14
+ - SDL2_mixer v.2.0.1
 
 **Compiling**
 
- - download and unzip SDL2, SDL2_image, SDL2_ttf
+ - download and unzip SDL2, SDL2_image, SDL2_ttf, SDL2_mixer
  - change sub-directory to SDL*\VisualC
  - open Visual Studio
- - load SDL* and build it
+ - load SDL*.sln, edit include and library paths, and build it
  - load Tankman and set include and library paths to compile
  - compile and run
  - that's all
