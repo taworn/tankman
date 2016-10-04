@@ -24,15 +24,10 @@ This game is NOT a fun game.  It's just a simple game to let you learn how to wr
  - compile and run
  - that's all
 
-**Known Bugs**
-
- - ...
-
 **Thank**
 
  - google.com - to search every time when you want to learn any new things
  - stackoverflow.com - good community
- - ...
  - www.spriters-resource.com - provide graphics, thank to Zephiel87 and Superjustinbros
  - www.atlassian.com/git - learn Git
  - and don't forget github.com - to host this project
