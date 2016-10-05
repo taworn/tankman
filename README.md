@@ -23,17 +23,28 @@ This game is NOT a fun game.  It's just a simple game to let you learn how to wr
  - load SDL*.sln, edit include and library paths, and build it
  - load Tankman and set include and library paths to compile
  - compile and run
- - that's all
+
+**How to Play**
+
+ - key Tab to select menu
+ - key Enter to choose menu
+ - key Up, Down, Left, Right to move tank
+ - key W, S, A, D also move tank
+ - key Space and Enter to shoot
+ - if you get shot, your HP decrease
+ - if you HP decrease to zero, you die and game over
+ - you have to shoot and destroy all eagle(s) to win stage
 
 **Thank**
 
+ - github.com - to host this project
  - google.com - to search every time when you want to learn any new things
  - stackoverflow.com - good community
  - www.spriters-resource.com - provide graphics, thank to Zephiel87 and Superjustinbros
- - www.atlassian.com/git - learn Git
- - and don't forget github.com - to host this project
+ - www.sounds-resource.com - provide sounds, thank to J-Sinn
+ - and Namco Limited (www.namco.co.jp) to build this original game
 
-----------
+---------
 Taworn T.
 
 My English is very poor, I'm not English native, sorry. T_T

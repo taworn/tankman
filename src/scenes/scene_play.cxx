@@ -48,6 +48,18 @@ bool ScenePlay::handleKey(SDL_KeyboardEvent key)
 		return true;
 	}
 #endif
+#ifdef _DEBUG
+	if (key.keysym.sym == SDLK_z) {
+		arena->endBattle();
+		Game::instance()->changeScene(Game::SCENE_WIN);
+		return true;
+	}
+	else if (key.keysym.sym == SDLK_c) {
+		arena->endBattle();
+		Game::instance()->changeScene(Game::SCENE_LOST);
+		return true;
+	}
+#endif
 	return false;
 }
 
