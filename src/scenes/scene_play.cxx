@@ -13,6 +13,8 @@
 
 ScenePlay::~ScenePlay()
 {
+	Mix_PauseMusic();
+	Mix_FreeMusic(musicTrack);
 	SDL_Log("ScenePlay::~ScenePlay()");
 }
 
@@ -21,6 +23,8 @@ ScenePlay::ScenePlay()
 	, keyTime(0)
 {
 	SDL_Log("ScenePlay::ScenePlay()");
+	musicTrack = Mix_LoadMUS(TANK_RES("track.wav"));
+	Mix_PlayMusic(musicTrack, -1);
 	arena->startBattle();
 }
 
@@ -42,7 +46,7 @@ bool ScenePlay::handleKey(SDL_KeyboardEvent key)
 	else if (key.keysym.sym == SDLK_w || key.keysym.sym == SDLK_UP) {
 		arena->getMap()->getHero()->move(Movable::MOVE_UP);
 		return true;
-	}
+}
 	else if (key.keysym.sym == SDLK_s || key.keysym.sym == SDLK_DOWN) {
 		arena->getMap()->getHero()->move(Movable::MOVE_DOWN);
 		return true;
@@ -90,7 +94,13 @@ void ScenePlay::render(int timeUsed)
 		}
 	}
 #endif
-
 	arena->draw(timeUsed);
+	if (arena->endBattle() != 0) {
+		// end battle
+		if (arena->nextStage())
+			Game::instance()->changeScene(Game::SCENE_STAGE);
+		else
+			Game::instance()->changeScene(Game::SCENE_WIN);
+	}
 }
 

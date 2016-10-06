@@ -68,13 +68,24 @@ public:
 
 	Movable* getHero() { return &movHero; }
 
+	bool isEnd() const { return ending && endingTime > 1500; }
+
 private:
+	struct EAGLE {
+		int hp;
+		bool start;
+		SDL_Point point;
+		Animation ani;
+	};
+
 	Sprite *spriteMap;
 	Sprite *spriteTank;
 	Sprite *spriteMisc;
+	Sprite *spriteMiscBig;
 
 	// map parsed
 	int width, height;
+	void **dataMap;
 	char *blockMap;
 	int *imageMap;
 
@@ -82,10 +93,15 @@ private:
 	int countTank;
 	int countBullets;
 	int countItems;
+	int countEagles;
 	Tank movTanks[64];
-	TankHero movHero;
 	Bullet *bullets[64];
 	Item items[4];
+
+	// the hero
+	TankHero movHero;
+	bool ending;
+	int endingTime;
 
 	Arena *arena;
 
@@ -102,6 +118,8 @@ private:
 	bool blockHasEnemy(SDL_Rect *rect);
 	bool blockIsShootPass(int unitX, int unitY);
 	bool blockShootEnemy(int x, int y);
+
+	void endingScene();
 
 	Map(const Map&);
 	Map& operator=(const Map&);

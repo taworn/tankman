@@ -14,10 +14,19 @@ Map::~Map()
 {
 	for (int i = 0; i < countBullets; i++)
 		delete bullets[i];
+	for (int i = 0; i < width * height; i++) {
+		if (dataMap[i] != NULL) {
+			delete (EAGLE*)dataMap[i];
+		}
+	}
 	if (imageMap)
 		delete[] imageMap;
 	if (blockMap)
 		delete[] blockMap;
+	if (dataMap)
+		delete[] dataMap;
+	if (spriteMiscBig)
+		delete spriteMiscBig;
 	if (spriteMisc)
 		delete spriteMisc;
 	if (spriteTank)
@@ -31,15 +40,17 @@ Map::Map()
 	, spriteTank(NULL)
 	, spriteMisc(NULL)
 	, width(), height()
-	, blockMap(NULL), imageMap(NULL)
+	, dataMap(NULL), blockMap(NULL), imageMap(NULL)
 	, countTank(0), countBullets(0), countItems(0)
 	, movHero()
+	, ending(false)
 	, arena(Game::instance()->getArena())
 {
 	SDL_Renderer *renderer = Game::instance()->getRenderer();
 	spriteMap = new Sprite(renderer, TANK_RES("map.png"), 8, 8);
 	spriteTank = new Sprite(renderer, TANK_RES("tank.png"), 16, 16);
 	spriteMisc = new Sprite(renderer, TANK_RES("misc.png"), 8, 8);
+	spriteMiscBig = new Sprite(renderer, TANK_RES("misc.png"), 4, 4);
 }
 
 bool Map::load(const char *fileName)
@@ -93,6 +104,13 @@ bool Map::load(const char *fileName)
 	SDL_RWclose(fp);
 
 	// copying
+	for (int i = 0; i < width * height; i++) {
+		if (dataMap[i] != NULL) {
+			delete (EAGLE*)dataMap[i];
+		}
+	}
+	if (this->dataMap)
+		delete[] this->dataMap;
 	if (this->blockMap)
 		delete[] this->blockMap;
 	if (this->imageMap)
@@ -103,15 +121,19 @@ bool Map::load(const char *fileName)
 		items[i].done();
 	this->width = w;
 	this->height = h;
+	this->dataMap = new void*[size];
 	this->blockMap = new char[size * 4];
 	this->imageMap = new int[size * 4];
 	this->countTank = 0;
 	this->countBullets = 0;
 	this->countItems = 0;
+	this->countEagles = 0;
+	this->ending = false;
 
 	// build map with unit as 32x32
 	w = width * 2;
 	h = height * 2;
+	SDL_memset(dataMap, 0, sizeof(void*) * size);
 	for (int j = 0; j < height; j++) {
 		int v = j * 2;
 		for (int i = 0; i < width; i++) {
@@ -151,6 +173,17 @@ bool Map::load(const char *fileName)
 				int x = i * 2 * 32;
 				int y = j * 2 * 32;
 				movHero.init(x, y);
+			}
+			else if (block == BLOCK_EAGLE) {
+				EAGLE *e = new EAGLE;
+				e->hp = EAGLE_HP;
+				e->start = false;
+				e->point.x = i * 2 * 32 - 32;
+				e->point.y = j * 2 * 32 - 32;
+				e->ani.add(0, 4, 6, Animation::ON_END_HIDDEN, 400);
+				e->ani.use(0);
+				dataMap[j * width + i] = e;
+				countEagles++;
 			}
 		}
 	}
@@ -387,6 +420,21 @@ void Map::draw(SDL_Renderer *renderer, int timeUsed)
 		}
 	}
 
+	// draws eagles
+	for (int i = 0; i < width * height; i++) {
+		if (dataMap[i] != NULL) {
+			EAGLE *e = (EAGLE*)dataMap[i];
+			if (e->start) {
+				SDL_Rect rect;
+				rect.x = e->point.x - viewport.x;
+				rect.y = e->point.y - viewport.y;
+				rect.w = 128;
+				rect.h = 128;
+				e->ani.draw(renderer, spriteMiscBig, &rect);
+			}
+		}
+	}
+
 	// draws items
 	for (int i = 0; i < 4; i++) {
 		items[i].draw(renderer, spriteMisc, &viewport);
@@ -402,7 +450,7 @@ void Map::draw(SDL_Renderer *renderer, int timeUsed)
 	movHero.play(timeUsed);
 	movHero.draw(renderer, spriteTank, spriteMisc, &viewport, timeUsed);
 
-	// bullets
+	// draws bullets
 	for (int i = 0; i < countBullets; i++) {
 		// move bullet
 		if (bullets[i]->check()) {
@@ -435,6 +483,9 @@ void Map::draw(SDL_Renderer *renderer, int timeUsed)
 			}
 		}
 	}
+
+	if (ending)
+		endingTime += timeUsed;
 }
 
 void Map::rawToMap(int raw, char *block, int *image)
@@ -513,6 +564,35 @@ bool Map::blockIsShootPass(int unitX, int unitY)
 
 	case BLOCK_STEEL:
 		return false;
+
+	case BLOCK_EAGLE:
+		// eagle reduce HP
+		int mapBlock = (unitY / 2) * width + (unitX / 2);
+		EAGLE *e = (EAGLE*)dataMap[mapBlock];
+		int dec = arena->boostFirepower() ? 4 : 1;
+		e->hp -= dec;
+		if (e->hp <= 0) {
+			int x = (unitX / 2) * 2;
+			int y = (unitY / 2) * 2;
+			int s = 3 % 4;
+			int t = 3 / 4;
+			s *= 2;
+			t *= 2;
+			blockMap[y * getUnitWidth() + x] = BLOCK_PASS;
+			blockMap[y * getUnitWidth() + x + 1] = BLOCK_PASS;
+			blockMap[(y + 1) * getUnitWidth() + x] = BLOCK_PASS;
+			blockMap[(y + 1) * getUnitWidth() + x + 1] = BLOCK_PASS;
+			imageMap[y * getUnitWidth() + x] = t * 8 + s;
+			imageMap[y * getUnitWidth() + x + 1] = t * 8 + s + 1;
+			imageMap[(y + 1) * getUnitWidth() + x] = (t + 1) * 8 + s;
+			imageMap[(y + 1) * getUnitWidth() + x + 1] = (t + 1) * 8 + s + 1;
+			arena->addScore(1000);
+			e->start = true;
+			countEagles--;
+			if (countEagles <= 0)
+				endingScene();
+		}
+		return false;
 	}
 }
 
@@ -537,5 +617,20 @@ bool Map::blockShootEnemy(int x, int y)
 		i++;
 	}
 	return false;
+}
+
+void Map::endingScene()
+{
+	int i = 0;
+	while (i < countTank) {
+		if (movTanks[i].isAlive()) {
+			movTanks[i].decreaseHP(999);
+			movTanks[i].dead();
+		}
+		i++;
+	}
+
+	ending = true;
+	endingTime = 0;
 }
 
