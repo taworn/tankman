@@ -43,7 +43,7 @@ Map::Map()
 	, dataMap(NULL), blockMap(NULL), imageMap(NULL)
 	, countTank(0), countBullets(0), countItems(0)
 	, movHero()
-	, ending(false)
+	, ending(0)
 	, arena(Game::instance()->getArena())
 {
 	SDL_Renderer *renderer = Game::instance()->getRenderer();
@@ -128,7 +128,7 @@ bool Map::load(const char *fileName)
 	this->countBullets = 0;
 	this->countItems = 0;
 	this->countEagles = 0;
-	this->ending = false;
+	this->ending = 0;
 
 	// build map with unit as 32x32
 	w = width * 2;
@@ -203,7 +203,7 @@ bool Map::canMove(Movable *movable, int direction, SDL_Point *pt)
 			if (blockIsPass(next, unitY) && blockIsPass(next, unitY + 1)) {
 				SDL_Rect rect = movable->getRect();
 				rect.x = next * 32;
-				if (!blockHasEnemy(&rect)) {
+				if (!blockHasEnemy(movable, &rect)) {
 					pt->x = movable->getX() - 32;
 					pt->y = movable->getY();
 					return true;
@@ -219,7 +219,7 @@ bool Map::canMove(Movable *movable, int direction, SDL_Point *pt)
 			if (blockIsPass(next, unitY) && blockIsPass(next, unitY + 1)) {
 				SDL_Rect rect = movable->getRect();
 				rect.x = (next - 1) * 32;
-				if (!blockHasEnemy(&rect)) {
+				if (!blockHasEnemy(movable, &rect)) {
 					pt->x = movable->getX() + 32;
 					pt->y = movable->getY();
 					return true;
@@ -235,7 +235,7 @@ bool Map::canMove(Movable *movable, int direction, SDL_Point *pt)
 			if (blockIsPass(unitX, next) && blockIsPass(unitX + 1, next)) {
 				SDL_Rect rect = movable->getRect();
 				rect.y = next * 32;
-				if (!blockHasEnemy(&rect)) {
+				if (!blockHasEnemy(movable, &rect)) {
 					pt->x = movable->getX();
 					pt->y = movable->getY() - 32;
 					return true;
@@ -251,7 +251,7 @@ bool Map::canMove(Movable *movable, int direction, SDL_Point *pt)
 			if (blockIsPass(unitX, next) && blockIsPass(unitX + 1, next)) {
 				SDL_Rect rect = movable->getRect();
 				rect.y = (next - 1) * 32;
-				if (!blockHasEnemy(&rect)) {
+				if (!blockHasEnemy(movable, &rect)) {
 					pt->x = movable->getX();
 					pt->y = movable->getY() + 32;
 					return true;
@@ -262,62 +262,65 @@ bool Map::canMove(Movable *movable, int direction, SDL_Point *pt)
 	return false;
 }
 
-bool Map::canShot(int x, int y, int action, SDL_Point *pt)
+bool Map::canShot(Bullet *bullet, SDL_Point *pt)
 {
-	if (action == Movable::ACTION_MOVE_LEFT) {
+	int a = bullet->getAction();
+	int x = bullet->getX();
+	int y = bullet->getY();
+	if (a == Movable::ACTION_MOVE_LEFT) {
 		int current = x / 32;
 		int unitY = y / 32;
 		int next = current - 1;
 		if (next >= 0) {
-			if (!blockIsShootPass(next, unitY - 1))
+			if (!blockIsShootPass(bullet, next, unitY - 1))
 				return false;
-			if (!blockIsShootPass(next, unitY))
+			if (!blockIsShootPass(bullet, next, unitY))
 				return false;
 		}
 	}
-	else if (action == Movable::ACTION_MOVE_RIGHT) {
+	else if (a == Movable::ACTION_MOVE_RIGHT) {
 		int current = x / 32;
 		int unitY = y / 32;
 		int next = current + 1;
 		if (next < getUnitWidth()) {
-			if (!blockIsShootPass(next, unitY - 1))
+			if (!blockIsShootPass(bullet, next, unitY - 1))
 				return false;
-			if (!blockIsShootPass(next, unitY))
+			if (!blockIsShootPass(bullet, next, unitY))
 				return false;
 		}
 	}
-	else if (action == Movable::ACTION_MOVE_UP) {
+	else if (a == Movable::ACTION_MOVE_UP) {
 		int unitX = x / 32;
 		int current = y / 32;
 		int next = current - 1;
 		if (next >= 0) {
-			if (!blockIsShootPass(unitX - 1, next))
+			if (!blockIsShootPass(bullet, unitX - 1, next))
 				return false;
-			if (!blockIsShootPass(unitX, next))
+			if (!blockIsShootPass(bullet, unitX, next))
 				return false;
 		}
 	}
-	else if (action == Movable::ACTION_MOVE_DOWN) {
+	else if (a == Movable::ACTION_MOVE_DOWN) {
 		int unitX = x / 32;
 		int current = y / 32;
 		int next = current + 1;
 		if (next < getUnitHeight()) {
-			if (!blockIsShootPass(unitX - 1, next))
+			if (!blockIsShootPass(bullet, unitX - 1, next))
 				return false;
-			if (!blockIsShootPass(unitX, next))
+			if (!blockIsShootPass(bullet, unitX, next))
 				return false;
 		}
 	}
-	if (blockShootEnemy(x, y))
+	if (blockShootEnemy(bullet, x, y))
 		return false;
 	return true;
 }
 
-bool Map::addBullet(int x, int y, int action)
+bool Map::addBullet(int x, int y, int action, bool hero)
 {
 	if (countBullets >= 64)
 		return false;
-	bullets[countBullets++] = new Bullet(x, y, action);
+	bullets[countBullets++] = new Bullet(x, y, action, hero);
 	Game::instance()->playShot();
 	return true;
 }
@@ -354,7 +357,6 @@ bool Map::checkItems(SDL_Rect *rect)
 			r.h -= 16;
 			SDL_Rect result;
 			if (SDL_IntersectRect(rect, &r, &result)) {
-				SDL_Log("you get item :)");
 				int item = items[i].getImageIndex() - 4;
 				items[i].done();
 				countItems--;
@@ -442,6 +444,7 @@ void Map::draw(SDL_Renderer *renderer, int timeUsed)
 
 	// draws enemy tanks
 	for (int i = 0; i < countTank; i++) {
+		movTanks[i].ai();
 		movTanks[i].play(timeUsed);
 		movTanks[i].draw(renderer, spriteTank, spriteMisc, &viewport, timeUsed);
 	}
@@ -484,6 +487,8 @@ void Map::draw(SDL_Renderer *renderer, int timeUsed)
 		}
 	}
 
+	if (!movHero.isAlive())
+		ending = -1;
 	if (ending)
 		endingTime += timeUsed;
 }
@@ -531,22 +536,41 @@ bool Map::blockIsPass(int unitX, int unitY)
 	}
 }
 
-bool Map::blockHasEnemy(SDL_Rect *rect)
+bool Map::blockHasEnemy(Movable *movable, SDL_Rect *rect)
 {
-	int i = 0;
-	while (i < countTank) {
-		if (movTanks[i].isAlive()) {
-			SDL_Rect enemy = movTanks[i].getRect();
-			SDL_Rect result;
-			if (SDL_IntersectRect(rect, &enemy, &result))
-				return true;
+	if (!movable->isHero()) {
+		SDL_Rect enemy = movHero.getRect();
+		SDL_Rect result;
+		if (SDL_IntersectRect(rect, &enemy, &result))
+			return true;
+		int i = 0;
+		while (i < countTank) {
+			if ((Movable*)&movTanks[i] != movable) {
+				if (movTanks[i].isAlive()) {
+					enemy = movTanks[i].getRect();
+					if (SDL_IntersectRect(rect, &enemy, &result))
+						return true;
+				}
+			}
+			i++;
 		}
-		i++;
+	}
+	else {
+		int i = 0;
+		while (i < countTank) {
+			if (movTanks[i].isAlive()) {
+				SDL_Rect enemy = movTanks[i].getRect();
+				SDL_Rect result;
+				if (SDL_IntersectRect(rect, &enemy, &result))
+					return true;
+			}
+			i++;
+		}
 	}
 	return false;
 }
 
-bool Map::blockIsShootPass(int unitX, int unitY)
+bool Map::blockIsShootPass(Bullet *bullet, int unitX, int unitY)
 {
 	int block = blockMap[unitY * getUnitWidth() + unitX];
 	switch (block) {
@@ -566,55 +590,73 @@ bool Map::blockIsShootPass(int unitX, int unitY)
 		return false;
 
 	case BLOCK_EAGLE:
-		// eagle reduce HP
-		int mapBlock = (unitY / 2) * width + (unitX / 2);
-		EAGLE *e = (EAGLE*)dataMap[mapBlock];
-		int dec = arena->boostFirepower() ? 4 : 1;
-		e->hp -= dec;
-		if (e->hp <= 0) {
-			int x = (unitX / 2) * 2;
-			int y = (unitY / 2) * 2;
-			int s = 3 % 4;
-			int t = 3 / 4;
-			s *= 2;
-			t *= 2;
-			blockMap[y * getUnitWidth() + x] = BLOCK_PASS;
-			blockMap[y * getUnitWidth() + x + 1] = BLOCK_PASS;
-			blockMap[(y + 1) * getUnitWidth() + x] = BLOCK_PASS;
-			blockMap[(y + 1) * getUnitWidth() + x + 1] = BLOCK_PASS;
-			imageMap[y * getUnitWidth() + x] = t * 8 + s;
-			imageMap[y * getUnitWidth() + x + 1] = t * 8 + s + 1;
-			imageMap[(y + 1) * getUnitWidth() + x] = (t + 1) * 8 + s;
-			imageMap[(y + 1) * getUnitWidth() + x + 1] = (t + 1) * 8 + s + 1;
-			arena->addScore(1000);
-			e->start = true;
-			countEagles--;
-			if (countEagles <= 0)
-				endingScene();
+		if (bullet->isFromHero()) {
+			// eagle reduce HP
+			int mapBlock = (unitY / 2) * width + (unitX / 2);
+			EAGLE *e = (EAGLE*)dataMap[mapBlock];
+			int dec = arena->boostFirepower() ? 4 : 1;
+			e->hp -= dec;
+			if (e->hp <= 0) {
+				int x = (unitX / 2) * 2;
+				int y = (unitY / 2) * 2;
+				int s = 3 % 4;
+				int t = 3 / 4;
+				s *= 2;
+				t *= 2;
+				blockMap[y * getUnitWidth() + x] = BLOCK_PASS;
+				blockMap[y * getUnitWidth() + x + 1] = BLOCK_PASS;
+				blockMap[(y + 1) * getUnitWidth() + x] = BLOCK_PASS;
+				blockMap[(y + 1) * getUnitWidth() + x + 1] = BLOCK_PASS;
+				imageMap[y * getUnitWidth() + x] = t * 8 + s;
+				imageMap[y * getUnitWidth() + x + 1] = t * 8 + s + 1;
+				imageMap[(y + 1) * getUnitWidth() + x] = (t + 1) * 8 + s;
+				imageMap[(y + 1) * getUnitWidth() + x + 1] = (t + 1) * 8 + s + 1;
+				arena->addScore(1000);
+				e->start = true;
+				countEagles--;
+				SDL_Log("eagle is dead, count left: %d", countEagles);
+				if (countEagles <= 0)
+					endingScene();
+			}
 		}
 		return false;
 	}
 }
 
-bool Map::blockShootEnemy(int x, int y)
+bool Map::blockShootEnemy(Bullet *bullet, int x, int y)
 {
-	int i = 0;
-	while (i < countTank) {
-		if (movTanks[i].isAlive()) {
-			SDL_Rect enemy = movTanks[i].getRect();
-			enemy.x += 16;
-			enemy.y += 16;
-			enemy.w -= 32;
-			enemy.h -= 32;
-			if (x >= enemy.x && x < enemy.x + enemy.w && y >= enemy.y && y < enemy.y + enemy.h) {
-				int dec = arena->boostFirepower() ? 4 : 1;
-				movTanks[i].decreaseHP(dec);
-				if (movTanks[i].getHP() <= 0)
-					movTanks[i].dead();
-				return true;
-			}
+	if (!bullet->isFromHero()) {
+		SDL_Rect enemy = movHero.getRect();
+		enemy.x += 16;
+		enemy.y += 16;
+		enemy.w -= 32;
+		enemy.h -= 32;
+		if (x >= enemy.x && x < enemy.x + enemy.w && y >= enemy.y && y < enemy.y + enemy.h) {
+			movHero.decreaseHP(1);
+			if (movHero.getHP() <= 0)
+				movHero.dead();
+			return true;
 		}
-		i++;
+	}
+	else {
+		int i = 0;
+		while (i < countTank) {
+			if (movTanks[i].isAlive()) {
+				SDL_Rect enemy = movTanks[i].getRect();
+				enemy.x += 16;
+				enemy.y += 16;
+				enemy.w -= 32;
+				enemy.h -= 32;
+				if (x >= enemy.x && x < enemy.x + enemy.w && y >= enemy.y && y < enemy.y + enemy.h) {
+					int dec = arena->boostFirepower() ? 4 : 1;
+					movTanks[i].decreaseHP(dec);
+					if (movTanks[i].getHP() <= 0)
+						movTanks[i].dead();
+					return true;
+				}
+			}
+			i++;
+		}
 	}
 	return false;
 }
@@ -630,7 +672,9 @@ void Map::endingScene()
 		i++;
 	}
 
-	ending = true;
+	SDL_Log("all of enemy tanks is died :)");
+
+	ending = 1;
 	endingTime = 0;
 }
 

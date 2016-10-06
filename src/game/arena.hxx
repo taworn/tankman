@@ -74,7 +74,7 @@ public:
 	void startBattle();
 
 	/**
-	 * Ends battle and report result.
+	 * Ends battle and report result.  Returns 1 is win, returns -1 is loss.
 	 */
 	int endBattle();
 

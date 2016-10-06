@@ -26,6 +26,7 @@ ScenePlay::ScenePlay()
 	musicTrack = Mix_LoadMUS(TANK_RES("track.wav"));
 	Mix_PlayMusic(musicTrack, -1);
 	arena->startBattle();
+	SDL_Log("start battle, stage %d", arena->getStage() + 1);
 }
 
 bool ScenePlay::handleKey(SDL_KeyboardEvent key)
@@ -46,7 +47,7 @@ bool ScenePlay::handleKey(SDL_KeyboardEvent key)
 	else if (key.keysym.sym == SDLK_w || key.keysym.sym == SDLK_UP) {
 		arena->getMap()->getHero()->move(Movable::MOVE_UP);
 		return true;
-}
+	}
 	else if (key.keysym.sym == SDLK_s || key.keysym.sym == SDLK_DOWN) {
 		arena->getMap()->getHero()->move(Movable::MOVE_DOWN);
 		return true;
@@ -95,12 +96,25 @@ void ScenePlay::render(int timeUsed)
 	}
 #endif
 	arena->draw(timeUsed);
-	if (arena->endBattle() != 0) {
-		// end battle
-		if (arena->nextStage())
-			Game::instance()->changeScene(Game::SCENE_STAGE);
-		else
-			Game::instance()->changeScene(Game::SCENE_WIN);
+
+	int result = arena->endBattle();
+	if (result != 0) {
+		if (result < 0) {
+			// you loss
+			SDL_Log("you die, game over T_T");
+			Game::instance()->changeScene(Game::SCENE_LOST);
+		}
+		else {
+			// you win
+			if (arena->nextStage()) {
+				SDL_Log("you win this stage, go to stage %d :)", arena->getStage() + 1);
+				Game::instance()->changeScene(Game::SCENE_STAGE);
+			}
+			else {
+				SDL_Log("you win this game ^_^");
+				Game::instance()->changeScene(Game::SCENE_WIN);
+			}
+		}
 	}
 }
 

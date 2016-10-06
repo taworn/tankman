@@ -73,8 +73,10 @@ int Arena::endBattle()
 		return 0;
 	}
 	else {
-		// for now, return 1 to tank hero win
-		return 1;
+		if (!map->isWin())
+			return -1;
+		else
+			return 1;
 	}
 }
 
@@ -96,9 +98,6 @@ void Arena::draw(int timeUsed)
 				SDL_Log("now your firepower is normal");
 			}
 		}
-	}
-	else {
-		SDL_Log("you win this stage %d", getStage() + 1);
 	}
 
 	// draws score

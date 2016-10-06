@@ -34,7 +34,7 @@ public:
 	/**
 	 * Checks if bullet direction is can be pass.
 	 */
-	bool canShot(int x, int y, int direction, SDL_Point *pt);
+	bool canShot(Bullet *bullet, SDL_Point *pt);
 
 	/**
 	 * Checks if position, in pixels, is in bounds or not.
@@ -44,7 +44,7 @@ public:
 	/**
 	 * Adds bullet.
 	 */
-	bool addBullet(int x, int y, int action);
+	bool addBullet(int x, int y, int action, bool hero);
 
 	/**
 	 * Adds item.
@@ -69,6 +69,7 @@ public:
 	Movable* getHero() { return &movHero; }
 
 	bool isEnd() const { return ending && endingTime > 1500; }
+	bool isWin() const { return ending && movHero.isAlive(); }
 
 private:
 	struct EAGLE {
@@ -100,7 +101,7 @@ private:
 
 	// the hero
 	TankHero movHero;
-	bool ending;
+	int ending;
 	int endingTime;
 
 	Arena *arena;
@@ -115,9 +116,9 @@ private:
 
 	void rawToMap(int raw, char *block, int *image);
 	bool blockIsPass(int unitX, int unitY);
-	bool blockHasEnemy(SDL_Rect *rect);
-	bool blockIsShootPass(int unitX, int unitY);
-	bool blockShootEnemy(int x, int y);
+	bool blockHasEnemy(Movable *movable, SDL_Rect *rect);
+	bool blockIsShootPass(Bullet *bullet, int unitX, int unitY);
+	bool blockShootEnemy(Bullet *bullet, int x, int y);
 
 	void endingScene();
 
