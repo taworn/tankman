@@ -133,7 +133,7 @@ INCLUDE_DIRS=/I$(SDL)\include /I$(SDL_IMAGE) /I$(SDL_TTF) /I$(SDL_MIXER)
 LIBRARY_DIRS=/LIBPATH:$(SDL)\lib\$(X64_TAG) /LIBPATH:$(SDL_IMAGE)\lib\$(X64_TAG) /LIBPATH:$(SDL_TTF)\lib\$(X64_TAG) /LIBPATH:$(SDL_MIXER)\lib\$(X64_TAG)
 
 # libraries
-LIBRARIES=SDL2_mixer.lib SDL2_ttf.lib SDL2_image.lib SDL2main.lib SDL2.lib user32.lib gdi32.lib kernel32.lib
+LIBRARIES=SDL2_mixer.lib SDL2_ttf.lib SDL2_image.lib SDL2main.lib SDL2.lib shell32.lib user32.lib gdi32.lib kernel32.lib
 
 # executable
 OUTPUT=tankman$(SHARED_TAG)$(DEBUG_TAG).exe

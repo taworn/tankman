@@ -133,7 +133,7 @@ INCLUDE_DIRS:=-I$(SDL)\include -I$(SDL_IMAGE) -I$(SDL_TTF) -I$(SDL_MIXER)
 LIBRARY_DIRS:=-L$(SDL)\lib\$(X64_TAG) -L$(SDL_IMAGE)\lib\$(X64_TAG) -L$(SDL_TTF)\lib\$(X64_TAG) -L$(SDL_MIXER)\lib\$(X64_TAG)
 
 # libraries
-LIBRARIES:=-lSDL2_mixer -lSDL2_ttf -lSDL2_image -lSDL2main -lSDL2 -luser32 -lgdi32 -lkernel32
+LIBRARIES:=-lSDL2_mixer -lSDL2_ttf -lSDL2_image -lSDL2main -lSDL2 -lshell32 -luser32 -lgdi32 -lkernel32
 
 # executable
 OUTPUT:=tankmanmingw$(SHARED_TAG)$(DEBUG_TAG).exe
